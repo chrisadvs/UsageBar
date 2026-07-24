@@ -8,20 +8,34 @@ class WidgetViewModel: ObservableObject {
     @Published var errorMsg: String?
     @Published var isLoading = false
     
+    // Provider Selection
+    @Published var selectedProvider: String {
+        didSet {
+            UserDefaults.standard.set(selectedProvider, forKey: "selectedProvider")
+            loadData()
+        }
+    }
+    
     // Debug properties for manual credential input
     @Published var credentialInput: String = ""
     @Published var showDebugInput = false
     
-    private let apiClient: UsageAPIClient
-    private let credentialProvider: CredentialProvider
+    private let claudeApiClient: UsageAPIClient
+    private let antigravityApiClient: AntigravityUsageAPIClient
+    
+    private let claudeCredentialProvider: CredentialProvider
+    private let antigravityCredentialProvider: CredentialProvider
     
     private var previousSnapshot: UsageSnapshot?
     
     init() {
-        let provider = WKWebViewCredentialProvider()
-        self.credentialProvider = provider
-        // Currently hardcoding the orgId as per the Ticket 03 spec (use known fixed value)
-        self.apiClient = UsageAPIClient(credentialProvider: provider, orgId: "0e15182b-a6f3-496b-aebb-23ec37dbe6be")
+        self.selectedProvider = UserDefaults.standard.string(forKey: "selectedProvider") ?? "Claude"
+        
+        self.claudeCredentialProvider = WKWebViewCredentialProvider()
+        self.antigravityCredentialProvider = AntigravityCredentialProvider()
+        
+        self.claudeApiClient = UsageAPIClient(credentialProvider: claudeCredentialProvider, orgId: "0e15182b-a6f3-496b-aebb-23ec37dbe6be")
+        self.antigravityApiClient = AntigravityUsageAPIClient(credentialProvider: antigravityCredentialProvider)
         
         requestNotificationPermission()
         startPolling()
@@ -57,14 +71,22 @@ class WidgetViewModel: ObservableObject {
         
         Task {
             do {
-                let newSnapshot = try await apiClient.fetchUsage()
+                let newSnapshot: UsageSnapshot
+                if selectedProvider == "Claude" {
+                    newSnapshot = try await claudeApiClient.fetchUsage()
+                } else {
+                    newSnapshot = try await antigravityApiClient.fetchUsage()
+                }
+                
                 self.checkAndNotifyIfNeeded(old: self.previousSnapshot, new: newSnapshot)
                 self.previousSnapshot = newSnapshot
                 self.snapshot = newSnapshot
             } catch let error as APIError {
                 if error == .missingCookie || error == .unauthorized {
-                    self.errorMsg = "Please log in to Claude."
-                    LoginWindowController.shared.showLogin()
+                    self.errorMsg = "Please log in to \(selectedProvider)."
+                    if selectedProvider == "Claude" {
+                        LoginWindowController.shared.showLogin()
+                    }
                 } else {
                     self.errorMsg = error.localizedDescription
                 }
@@ -78,10 +100,16 @@ class WidgetViewModel: ObservableObject {
     }
     
     func saveCredential() {
-        credentialProvider.saveCredential(credentialInput.trimmingCharacters(in: .whitespacesAndNewlines))
+        let provider = selectedProvider == "Claude" ? claudeCredentialProvider : antigravityCredentialProvider
+        provider.saveCredential(credentialInput.trimmingCharacters(in: .whitespacesAndNewlines))
         credentialInput = ""
         showDebugInput = false
         loadData()
+    }
+    
+    func providerIcon() -> NSImage {
+        let path = selectedProvider == "Claude" ? "/Applications/Claude.app" : "/Applications/Antigravity IDE.app"
+        return NSWorkspace.shared.icon(forFile: path)
     }
     
     private func checkAndNotifyIfNeeded(old: UsageSnapshot?, new: UsageSnapshot) {

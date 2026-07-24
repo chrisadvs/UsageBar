@@ -18,18 +18,24 @@ struct TokenUsageWidgetApp: App {
         } label: {
             if let snapshot = viewModel.snapshot {
                 let allWindows = snapshot.groups.flatMap { $0.windows }
-                let worstPercent = allWindows.map { $0.percentRemaining }.min() ?? .nan
-                let worstSeverity = allWindows.contains(where: { $0.severity == .red }) ? Severity.red :
-                                    (allWindows.contains(where: { $0.severity == .yellow }) ? Severity.yellow : Severity.green)
+                let worstWindow = allWindows.min { $0.percentRemaining < $1.percentRemaining }
+                let worstPercent = worstWindow?.percentRemaining ?? .nan
+                let worstSeverity = worstWindow?.severity ?? .green
+                let label = worstWindow?.kind == .fiveHour ? "5h" : "Wk"
 
                 HStack(spacing: 3) {
-                    Image("MenuBarIcon")
+                    Image(nsImage: viewModel.providerIcon())
+                        .resizable()
+                        .frame(width: 16, height: 16)
+                    Text(label)
                     Text(String(format: "%.0f%%", worstPercent))
                 }
                 .foregroundColor(color(for: worstSeverity))
             } else {
                 HStack(spacing: 3) {
-                    Image("MenuBarIcon")
+                    Image(nsImage: viewModel.providerIcon())
+                        .resizable()
+                        .frame(width: 16, height: 16)
                     Text("TU")
                 }
             }
@@ -55,8 +61,9 @@ struct ContentView: View {
             HStack {
                 Text("Provider:")
                     .font(.headline)
-                Picker("", selection: .constant("Claude")) {
+                Picker("", selection: $viewModel.selectedProvider) {
                     Text("Claude").tag("Claude")
+                    Text("Antigravity").tag("Antigravity")
                 }
                 .pickerStyle(.menu)
                 .frame(width: 120)
