@@ -11,8 +11,11 @@
 		12DC9491BE25F7F44A0D57DB /* UsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F50A63E9A5E2ED104CEA68 /* UsageSnapshot.swift */; };
 		35464FB53D216DC50DBAE91B /* UsageSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA13822FE222604BD511F1B /* UsageSnapshotTests.swift */; };
 		4028F323F360770C870195DD /* CredentialProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */; };
+		64B28CA5A8970010980CD8CB /* AntigravityUsageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5C1CCD8445E0F3250E5A68 /* AntigravityUsageParser.swift */; };
 		662B16896F9DE5165B1BF228 /* LoginWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BFED8267EA0AB31F63ADBFB /* LoginWindowController.swift */; };
 		6EA649ED18E7CE927BE2549E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B81334DBAD056F30B1ADA597 /* Assets.xcassets */; };
+		82B2B8C9C1D06B44397CB554 /* AntigravityUsageParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F89649C9474C8CFA7B133F7 /* AntigravityUsageParserTests.swift */; };
+		C6B411781A00B3443DA21365 /* AntigravityUsageAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047D069DE6ADE26967D65998 /* AntigravityUsageAPIClient.swift */; };
 		C77D98D6667D219AC47304EA /* AntigravityCredentialProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8044ADCFC367BF2483C17AC7 /* AntigravityCredentialProvider.swift */; };
 		CA4302E895361BF904DF1A2B /* WidgetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242EB8675DEF503352E3AC40 /* WidgetViewModel.swift */; };
 		D0E0211D55C14E975C49BF7F /* TokenUsageWidgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7243E79530E8C0A5F04C08F7 /* TokenUsageWidgetApp.swift */; };
@@ -29,8 +32,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		047D069DE6ADE26967D65998 /* AntigravityUsageAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntigravityUsageAPIClient.swift; sourceTree = "<group>"; };
 		242EB8675DEF503352E3AC40 /* WidgetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetViewModel.swift; sourceTree = "<group>"; };
 		6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialProvider.swift; sourceTree = "<group>"; };
+		6F89649C9474C8CFA7B133F7 /* AntigravityUsageParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntigravityUsageParserTests.swift; sourceTree = "<group>"; };
 		7243E79530E8C0A5F04C08F7 /* TokenUsageWidgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenUsageWidgetApp.swift; sourceTree = "<group>"; };
 		72F50A63E9A5E2ED104CEA68 /* UsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshot.swift; sourceTree = "<group>"; };
 		8044ADCFC367BF2483C17AC7 /* AntigravityCredentialProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntigravityCredentialProvider.swift; sourceTree = "<group>"; };
@@ -39,6 +44,7 @@
 		B337F51FAEE910726B20F694 /* TokenUsageWidget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TokenUsageWidget.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B81334DBAD056F30B1ADA597 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DD8BD83F12B467CF60604B87 /* TokenUsageWidgetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TokenUsageWidgetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FA5C1CCD8445E0F3250E5A68 /* AntigravityUsageParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntigravityUsageParser.swift; sourceTree = "<group>"; };
 		FFA13822FE222604BD511F1B /* UsageSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshotTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -65,6 +71,8 @@
 			isa = PBXGroup;
 			children = (
 				8044ADCFC367BF2483C17AC7 /* AntigravityCredentialProvider.swift */,
+				047D069DE6ADE26967D65998 /* AntigravityUsageAPIClient.swift */,
+				FA5C1CCD8445E0F3250E5A68 /* AntigravityUsageParser.swift */,
 				B81334DBAD056F30B1ADA597 /* Assets.xcassets */,
 				6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */,
 				9BFED8267EA0AB31F63ADBFB /* LoginWindowController.swift */,
@@ -80,6 +88,7 @@
 		9C350C059D5DE080142F5F7D /* TokenUsageWidgetTests */ = {
 			isa = PBXGroup;
 			children = (
+				6F89649C9474C8CFA7B133F7 /* AntigravityUsageParserTests.swift */,
 				FFA13822FE222604BD511F1B /* UsageSnapshotTests.swift */,
 			);
 			name = TokenUsageWidgetTests;
@@ -173,6 +182,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C77D98D6667D219AC47304EA /* AntigravityCredentialProvider.swift in Sources */,
+				C6B411781A00B3443DA21365 /* AntigravityUsageAPIClient.swift in Sources */,
+				64B28CA5A8970010980CD8CB /* AntigravityUsageParser.swift in Sources */,
 				4028F323F360770C870195DD /* CredentialProvider.swift in Sources */,
 				662B16896F9DE5165B1BF228 /* LoginWindowController.swift in Sources */,
 				D0E0211D55C14E975C49BF7F /* TokenUsageWidgetApp.swift in Sources */,
@@ -186,6 +197,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82B2B8C9C1D06B44397CB554 /* AntigravityUsageParserTests.swift in Sources */,
 				35464FB53D216DC50DBAE91B /* UsageSnapshotTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
