@@ -52,58 +52,12 @@ public class AntigravityCredentialProvider: CredentialProvider {
     }
     
     private func extractAccessToken(from data: Data) -> String? {
-        var offset = 0
-        
-        while offset < data.count {
-            let (tagWire, _) = readVarint(data, at: &offset)
-            let wireType = Int(tagWire & 0x07)
-            let fieldNumber = Int(tagWire >> 3)
-            
-            if wireType == 2 { // length-delimited
-                let (length, _) = readVarint(data, at: &offset)
-                
-                #if DEBUG
-                print("AntigravityCredentialProvider: [Depth 0] field=\(fieldNumber) wireType=\(wireType) len=\(length)")
-                #endif
-                
-                if offset + Int(length) > data.count {
-                    break
-                }
-                
-                let fieldData = data.subdata(in: offset..<offset+Int(length))
-                
-                if let token = searchForAuthSubstructure(in: fieldData, depth: 1) {
-                    return token
-                }
-                
-                offset += Int(length)
-            } else if wireType == 0 { // varint
-                let _ = readVarint(data, at: &offset)
-                #if DEBUG
-                print("AntigravityCredentialProvider: [Depth 0] field=\(fieldNumber) wireType=\(wireType)")
-                #endif
-            } else if wireType == 1 { // 64-bit
-                offset += 8
-                #if DEBUG
-                print("AntigravityCredentialProvider: [Depth 0] field=\(fieldNumber) wireType=\(wireType)")
-                #endif
-            } else if wireType == 5 { // 32-bit
-                offset += 4
-                #if DEBUG
-                print("AntigravityCredentialProvider: [Depth 0] field=\(fieldNumber) wireType=\(wireType)")
-                #endif
-            } else {
-                break
-            }
-        }
-        return nil
+        return scanAllFields(in: data, depth: 0)
     }
     
-    private func searchForAuthSubstructure(in data: Data, depth: Int) -> String? {
+    private func scanAllFields(in data: Data, depth: Int) -> String? {
         var offset = 0
-        var accessToken: String? = nil
-        var foundTag2 = false
-        var foundTag3 = false
+        var foundToken: String? = nil
         
         while offset < data.count {
             let (tagWire, _) = readVarint(data, at: &offset)
@@ -123,26 +77,33 @@ public class AntigravityCredentialProvider: CredentialProvider {
                 
                 let fieldData = data.subdata(in: offset..<offset+Int(length))
                 
-                if fieldNumber == 1 {
-                    if let str = String(data: fieldData, encoding: .utf8), str.hasPrefix("ya29.") {
-                        accessToken = str
-                        extraInfo = " (matches ya29 prefix: true)"
-                    }
-                } else if fieldNumber == 2 {
-                    if let str = String(data: fieldData, encoding: .utf8), str == "Bearer" {
-                        foundTag2 = true
-                        extraInfo = " (is Bearer)"
-                    }
-                } else if fieldNumber == 3 {
-                    if let str = String(data: fieldData, encoding: .utf8), str.hasPrefix("1//") {
-                        foundTag3 = true
-                        extraInfo = " (matches refresh token prefix: true)"
+                let utf8Str = String(data: fieldData, encoding: .utf8)
+                let isUtf8 = (utf8Str != nil)
+                let hasYa29 = utf8Str?.contains("ya29.") ?? false
+                
+                #if DEBUG
+                print("AntigravityCredentialProvider: [Depth \(depth)] field=\(fieldNumber) len=\(length) isUtf8=\(isUtf8) hasYa29=\(hasYa29)")
+                #endif
+                
+                if hasYa29 {
+                    if let json = try? JSONSerialization.jsonObject(with: fieldData, options: []) as? [String: Any] {
+                        let candidateToken = (json["access_token"] as? String) ?? (json["accessToken"] as? String)
+                        
+                        if let token = candidateToken, token.hasPrefix("ya29.") {
+                            #if DEBUG
+                            print("AntigravityCredentialProvider: Successfully extracted and validated JSON access token!")
+                            #endif
+                            if foundToken == nil {
+                                foundToken = token
+                            }
+                        }
                     }
                 }
                 
-                #if DEBUG
-                print("AntigravityCredentialProvider: [Depth \(depth)] field=\(fieldNumber) wireType=\(wireType) len=\(length)\(extraInfo)")
-                #endif
+                // Recurse into this field if we haven't found a token yet
+                if foundToken == nil, let nestedToken = scanAllFields(in: fieldData, depth: depth + 1) {
+                    foundToken = nestedToken
+                }
                 
                 offset += Int(length)
             } else if wireType == 0 {
@@ -165,36 +126,7 @@ public class AntigravityCredentialProvider: CredentialProvider {
             }
         }
         
-        if accessToken != nil && foundTag2 && foundTag3 {
-            return accessToken
-        }
-        
-        // Recursive search deeper if not found in this layer
-        offset = 0
-        while offset < data.count {
-            let (tagWire, _) = readVarint(data, at: &offset)
-            let wireType = Int(tagWire & 0x07)
-            if wireType == 2 {
-                let (length, _) = readVarint(data, at: &offset)
-                if offset + Int(length) <= data.count {
-                    let fieldData = data.subdata(in: offset..<offset+Int(length))
-                    if let token = searchForAuthSubstructure(in: fieldData, depth: depth + 1) {
-                        return token
-                    }
-                }
-                offset += Int(length)
-            } else if wireType == 0 {
-                let _ = readVarint(data, at: &offset)
-            } else if wireType == 1 {
-                offset += 8
-            } else if wireType == 5 {
-                offset += 4
-            } else {
-                break
-            }
-        }
-        
-        return nil
+        return foundToken
     }
     
     private func readVarint(_ data: Data, at offset: inout Int) -> (UInt64, Int) {
