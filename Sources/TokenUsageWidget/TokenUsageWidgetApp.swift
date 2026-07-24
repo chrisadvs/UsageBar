@@ -22,13 +22,13 @@ struct TokenUsageWidgetApp: App {
                                     (snapshot.fiveHour.severity == .yellow || snapshot.sevenDay.severity == .yellow ? Severity.yellow : Severity.green)
 
                 HStack(spacing: 3) {
-                    Image(systemName: "bolt.fill")
+                    Image("MenuBarIcon")
                     Text(String(format: "%.0f%%", worstPercent))
                 }
                 .foregroundColor(color(for: worstSeverity))
             } else {
                 HStack(spacing: 3) {
-                    Image(systemName: "bolt.fill")
+                    Image("MenuBarIcon")
                     Text("TU")
                 }
             }

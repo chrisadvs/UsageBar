@@ -12,6 +12,7 @@
 		35464FB53D216DC50DBAE91B /* UsageSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA13822FE222604BD511F1B /* UsageSnapshotTests.swift */; };
 		4028F323F360770C870195DD /* CredentialProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */; };
 		662B16896F9DE5165B1BF228 /* LoginWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BFED8267EA0AB31F63ADBFB /* LoginWindowController.swift */; };
+		6EA649ED18E7CE927BE2549E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B81334DBAD056F30B1ADA597 /* Assets.xcassets */; };
 		CA4302E895361BF904DF1A2B /* WidgetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242EB8675DEF503352E3AC40 /* WidgetViewModel.swift */; };
 		D0E0211D55C14E975C49BF7F /* TokenUsageWidgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7243E79530E8C0A5F04C08F7 /* TokenUsageWidgetApp.swift */; };
 /* End PBXBuildFile section */
@@ -34,6 +35,7 @@
 		9BFED8267EA0AB31F63ADBFB /* LoginWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginWindowController.swift; sourceTree = "<group>"; };
 		AE9CD5B9855FD5B8D812965C /* UsageAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageAPIClient.swift; sourceTree = "<group>"; };
 		B337F51FAEE910726B20F694 /* TokenUsageWidget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TokenUsageWidget.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B81334DBAD056F30B1ADA597 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DD8BD83F12B467CF60604B87 /* TokenUsageWidgetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TokenUsageWidgetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFA13822FE222604BD511F1B /* UsageSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshotTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -60,6 +62,7 @@
 		930724F56780BFB26715E05C /* TokenUsageWidget */ = {
 			isa = PBXGroup;
 			children = (
+				B81334DBAD056F30B1ADA597 /* Assets.xcassets */,
 				6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */,
 				9BFED8267EA0AB31F63ADBFB /* LoginWindowController.swift */,
 				7243E79530E8C0A5F04C08F7 /* TokenUsageWidgetApp.swift */,
@@ -106,6 +109,7 @@
 			buildConfigurationList = A27A6DA083E6D8260BDD1BD5 /* Build configuration list for PBXNativeTarget "TokenUsageWidget" */;
 			buildPhases = (
 				148A7096C8D5D6C7BA92215D /* Sources */,
+				A232B5AE82BD7FF5341362ED /* Resources */,
 			);
 			buildRules = (
 			);
@@ -148,6 +152,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A232B5AE82BD7FF5341362ED /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6EA649ED18E7CE927BE2549E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		148A7096C8D5D6C7BA92215D /* Sources */ = {
