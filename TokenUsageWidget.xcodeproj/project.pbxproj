@@ -1,0 +1,397 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00EFA7125AC315C627347792 /* UsageAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9CD5B9855FD5B8D812965C /* UsageAPIClient.swift */; };
+		12DC9491BE25F7F44A0D57DB /* UsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F50A63E9A5E2ED104CEA68 /* UsageSnapshot.swift */; };
+		35464FB53D216DC50DBAE91B /* UsageSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA13822FE222604BD511F1B /* UsageSnapshotTests.swift */; };
+		4028F323F360770C870195DD /* CredentialProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */; };
+		CA4302E895361BF904DF1A2B /* WidgetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242EB8675DEF503352E3AC40 /* WidgetViewModel.swift */; };
+		D0E0211D55C14E975C49BF7F /* TokenUsageWidgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7243E79530E8C0A5F04C08F7 /* TokenUsageWidgetApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3F1EACC42983C0629DF5F33E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 91A53B64C348914086A49E52 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F561ED511372263C4F50B895;
+			remoteInfo = TokenUsageWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		242EB8675DEF503352E3AC40 /* WidgetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetViewModel.swift; sourceTree = "<group>"; };
+		6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialProvider.swift; sourceTree = "<group>"; };
+		7243E79530E8C0A5F04C08F7 /* TokenUsageWidgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenUsageWidgetApp.swift; sourceTree = "<group>"; };
+		72F50A63E9A5E2ED104CEA68 /* UsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshot.swift; sourceTree = "<group>"; };
+		AE9CD5B9855FD5B8D812965C /* UsageAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageAPIClient.swift; sourceTree = "<group>"; };
+		B337F51FAEE910726B20F694 /* TokenUsageWidget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TokenUsageWidget.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD8BD83F12B467CF60604B87 /* TokenUsageWidgetTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TokenUsageWidgetTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FFA13822FE222604BD511F1B /* UsageSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshotTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		03430508A197B938BB76ECB0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B337F51FAEE910726B20F694 /* TokenUsageWidget.app */,
+				DD8BD83F12B467CF60604B87 /* TokenUsageWidgetTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1C97E38098081955239B15F5 = {
+			isa = PBXGroup;
+			children = (
+				930724F56780BFB26715E05C /* TokenUsageWidget */,
+				9C350C059D5DE080142F5F7D /* TokenUsageWidgetTests */,
+				03430508A197B938BB76ECB0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		930724F56780BFB26715E05C /* TokenUsageWidget */ = {
+			isa = PBXGroup;
+			children = (
+				6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */,
+				7243E79530E8C0A5F04C08F7 /* TokenUsageWidgetApp.swift */,
+				AE9CD5B9855FD5B8D812965C /* UsageAPIClient.swift */,
+				72F50A63E9A5E2ED104CEA68 /* UsageSnapshot.swift */,
+				242EB8675DEF503352E3AC40 /* WidgetViewModel.swift */,
+			);
+			name = TokenUsageWidget;
+			path = Sources/TokenUsageWidget;
+			sourceTree = "<group>";
+		};
+		9C350C059D5DE080142F5F7D /* TokenUsageWidgetTests */ = {
+			isa = PBXGroup;
+			children = (
+				FFA13822FE222604BD511F1B /* UsageSnapshotTests.swift */,
+			);
+			name = TokenUsageWidgetTests;
+			path = Tests/TokenUsageWidgetTests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A5F40E70718E876BBC8F71F5 /* TokenUsageWidgetTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CC885B016B1CAEDD4AC70C62 /* Build configuration list for PBXNativeTarget "TokenUsageWidgetTests" */;
+			buildPhases = (
+				67F0F3A68B105F88E26F270E /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F9770EA190A60B3D8FC21167 /* PBXTargetDependency */,
+			);
+			name = TokenUsageWidgetTests;
+			packageProductDependencies = (
+			);
+			productName = TokenUsageWidgetTests;
+			productReference = DD8BD83F12B467CF60604B87 /* TokenUsageWidgetTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		F561ED511372263C4F50B895 /* TokenUsageWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A27A6DA083E6D8260BDD1BD5 /* Build configuration list for PBXNativeTarget "TokenUsageWidget" */;
+			buildPhases = (
+				148A7096C8D5D6C7BA92215D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TokenUsageWidget;
+			packageProductDependencies = (
+			);
+			productName = TokenUsageWidget;
+			productReference = B337F51FAEE910726B20F694 /* TokenUsageWidget.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		91A53B64C348914086A49E52 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 44B15DF5FB28C05DCF274EC4 /* Build configuration list for PBXProject "TokenUsageWidget" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 1C97E38098081955239B15F5;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 03430508A197B938BB76ECB0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F561ED511372263C4F50B895 /* TokenUsageWidget */,
+				A5F40E70718E876BBC8F71F5 /* TokenUsageWidgetTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		148A7096C8D5D6C7BA92215D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4028F323F360770C870195DD /* CredentialProvider.swift in Sources */,
+				D0E0211D55C14E975C49BF7F /* TokenUsageWidgetApp.swift in Sources */,
+				00EFA7125AC315C627347792 /* UsageAPIClient.swift in Sources */,
+				12DC9491BE25F7F44A0D57DB /* UsageSnapshot.swift in Sources */,
+				CA4302E895361BF904DF1A2B /* WidgetViewModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		67F0F3A68B105F88E26F270E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				35464FB53D216DC50DBAE91B /* UsageSnapshotTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F9770EA190A60B3D8FC21167 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F561ED511372263C4F50B895 /* TokenUsageWidget */;
+			targetProxy = 3F1EACC42983C0629DF5F33E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		29FA12E50C4215FB2CE654E8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chris.TokenUsageWidget;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		399519AE465105BDD1AB19B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		BD60B327144A4C6A927FD77A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chris.TokenUsageWidgetTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TokenUsageWidget.app/Contents/MacOS/TokenUsageWidget";
+			};
+			name = Debug;
+		};
+		D0ED1F8B25C74A2D9AD51B0E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chris.TokenUsageWidget;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		D29B2765366C60FF6421EFE4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chris.TokenUsageWidgetTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TokenUsageWidget.app/Contents/MacOS/TokenUsageWidget";
+			};
+			name = Release;
+		};
+		DE13F7FA0055E99FDEE3B66C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		44B15DF5FB28C05DCF274EC4 /* Build configuration list for PBXProject "TokenUsageWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				399519AE465105BDD1AB19B2 /* Debug */,
+				DE13F7FA0055E99FDEE3B66C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A27A6DA083E6D8260BDD1BD5 /* Build configuration list for PBXNativeTarget "TokenUsageWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D0ED1F8B25C74A2D9AD51B0E /* Debug */,
+				29FA12E50C4215FB2CE654E8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CC885B016B1CAEDD4AC70C62 /* Build configuration list for PBXNativeTarget "TokenUsageWidgetTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BD60B327144A4C6A927FD77A /* Debug */,
+				D29B2765366C60FF6421EFE4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 91A53B64C348914086A49E52 /* Project object */;
+}

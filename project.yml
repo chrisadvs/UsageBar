@@ -1,0 +1,22 @@
+name: TokenUsageWidget
+options:
+  bundleIdPrefix: com.chris
+targets:
+  TokenUsageWidget:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: Sources/TokenUsageWidget
+    info:
+      path: Info.plist
+      properties:
+        LSUIElement: true
+  TokenUsageWidgetTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "14.0"
+    sources:
+      - path: Tests/TokenUsageWidgetTests
+    dependencies:
+      - target: TokenUsageWidget
