@@ -13,6 +13,7 @@
 		4028F323F360770C870195DD /* CredentialProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */; };
 		662B16896F9DE5165B1BF228 /* LoginWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BFED8267EA0AB31F63ADBFB /* LoginWindowController.swift */; };
 		6EA649ED18E7CE927BE2549E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B81334DBAD056F30B1ADA597 /* Assets.xcassets */; };
+		C77D98D6667D219AC47304EA /* AntigravityCredentialProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8044ADCFC367BF2483C17AC7 /* AntigravityCredentialProvider.swift */; };
 		CA4302E895361BF904DF1A2B /* WidgetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242EB8675DEF503352E3AC40 /* WidgetViewModel.swift */; };
 		D0E0211D55C14E975C49BF7F /* TokenUsageWidgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7243E79530E8C0A5F04C08F7 /* TokenUsageWidgetApp.swift */; };
 /* End PBXBuildFile section */
@@ -32,6 +33,7 @@
 		6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialProvider.swift; sourceTree = "<group>"; };
 		7243E79530E8C0A5F04C08F7 /* TokenUsageWidgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenUsageWidgetApp.swift; sourceTree = "<group>"; };
 		72F50A63E9A5E2ED104CEA68 /* UsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshot.swift; sourceTree = "<group>"; };
+		8044ADCFC367BF2483C17AC7 /* AntigravityCredentialProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntigravityCredentialProvider.swift; sourceTree = "<group>"; };
 		9BFED8267EA0AB31F63ADBFB /* LoginWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginWindowController.swift; sourceTree = "<group>"; };
 		AE9CD5B9855FD5B8D812965C /* UsageAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageAPIClient.swift; sourceTree = "<group>"; };
 		B337F51FAEE910726B20F694 /* TokenUsageWidget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TokenUsageWidget.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -62,6 +64,7 @@
 		930724F56780BFB26715E05C /* TokenUsageWidget */ = {
 			isa = PBXGroup;
 			children = (
+				8044ADCFC367BF2483C17AC7 /* AntigravityCredentialProvider.swift */,
 				B81334DBAD056F30B1ADA597 /* Assets.xcassets */,
 				6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */,
 				9BFED8267EA0AB31F63ADBFB /* LoginWindowController.swift */,
@@ -169,6 +172,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C77D98D6667D219AC47304EA /* AntigravityCredentialProvider.swift in Sources */,
 				4028F323F360770C870195DD /* CredentialProvider.swift in Sources */,
 				662B16896F9DE5165B1BF228 /* LoginWindowController.swift in Sources */,
 				D0E0211D55C14E975C49BF7F /* TokenUsageWidgetApp.swift in Sources */,
@@ -280,6 +284,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -313,6 +318,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

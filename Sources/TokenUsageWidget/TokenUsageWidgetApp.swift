@@ -17,9 +17,10 @@ struct TokenUsageWidgetApp: App {
             ContentView(viewModel: viewModel)
         } label: {
             if let snapshot = viewModel.snapshot {
-                let worstPercent = min(snapshot.fiveHour.percentRemaining, snapshot.sevenDay.percentRemaining)
-                let worstSeverity = snapshot.fiveHour.severity == .red || snapshot.sevenDay.severity == .red ? Severity.red :
-                                    (snapshot.fiveHour.severity == .yellow || snapshot.sevenDay.severity == .yellow ? Severity.yellow : Severity.green)
+                let allWindows = snapshot.groups.flatMap { $0.windows }
+                let worstPercent = allWindows.map { $0.percentRemaining }.min() ?? .nan
+                let worstSeverity = allWindows.contains(where: { $0.severity == .red }) ? Severity.red :
+                                    (allWindows.contains(where: { $0.severity == .yellow }) ? Severity.yellow : Severity.green)
 
                 HStack(spacing: 3) {
                     Image("MenuBarIcon")
@@ -66,10 +67,26 @@ struct ContentView: View {
             if viewModel.isLoading && viewModel.snapshot == nil {
                 ProgressView("Loading...")
             } else if let snapshot = viewModel.snapshot {
-                HStack(spacing: 20) {
-                    WindowView(title: "5 Hour", window: snapshot.fiveHour)
-                    Divider()
-                    WindowView(title: "7 Day", window: snapshot.sevenDay)
+                VStack(spacing: 12) {
+                    ForEach(0..<snapshot.groups.count, id: \.self) { groupIndex in
+                        let group = snapshot.groups[groupIndex]
+                        if let name = group.name {
+                            Text(name).font(.subheadline).foregroundColor(.secondary)
+                        }
+                        HStack(spacing: 20) {
+                            ForEach(0..<group.windows.count, id: \.self) { winIndex in
+                                let window = group.windows[winIndex]
+                                let title = window.kind == .fiveHour ? "5 Hour" : "7 Day"
+                                WindowView(title: title, window: window)
+                                if winIndex < group.windows.count - 1 {
+                                    Divider()
+                                }
+                            }
+                        }
+                        if groupIndex < snapshot.groups.count - 1 {
+                            Divider()
+                        }
+                    }
                 }
             } else if let error = viewModel.errorMsg {
                 Text(error)
@@ -119,7 +136,7 @@ struct ContentView: View {
                         .border(Color.gray, width: 1)
                     HStack {
                         Spacer()
-                        Button("Save Credential & Refresh") {
+                        Button("Save & Refresh") {
                             viewModel.saveCredential()
                         }
                     }
@@ -155,7 +172,7 @@ struct ContentView: View {
 
 struct WindowView: View {
     let title: String
-    let window: WindowState
+    let window: UsageWindow
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {

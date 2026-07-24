@@ -20,3 +20,5 @@ targets:
       - path: Tests/TokenUsageWidgetTests
     dependencies:
       - target: TokenUsageWidget
+    settings:
+      GENERATE_INFOPLIST_FILE: YES

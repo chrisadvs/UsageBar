@@ -10,8 +10,8 @@ public class UsageAPIClient {
     }
     
     public func fetchUsage() async throws -> UsageSnapshot {
-        guard let credential = await credentialProvider.getCredential(), !credential.isEmpty else {
-            throw APIError.missingCredential
+        guard let cookie = await credentialProvider.getCredential(), !cookie.isEmpty else {
+            throw APIError.missingCookie
         }
         
         guard let url = URL(string: "https://claude.ai/api/organizations/\(orgId)/usage") else {
@@ -20,7 +20,7 @@ public class UsageAPIClient {
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.addValue(credential, forHTTPHeaderField: "cookie")
+        request.addValue(cookie, forHTTPHeaderField: "cookie")
         // Mimic standard headers slightly just in case
         request.addValue("application/json", forHTTPHeaderField: "content-type")
         request.addValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36", forHTTPHeaderField: "user-agent")
@@ -44,7 +44,7 @@ public class UsageAPIClient {
 }
 
 public enum APIError: Error, LocalizedError, Equatable {
-    case missingCredential
+    case missingCookie
     case invalidURL
     case invalidResponse
     case unauthorized
@@ -52,8 +52,8 @@ public enum APIError: Error, LocalizedError, Equatable {
     
     public var errorDescription: String? {
         switch self {
-        case .missingCredential:
-            return "No credential found. Please paste your credential in Debug mode."
+        case .missingCookie:
+            return "No cookie found. Please paste your cookie in Debug mode."
         case .invalidURL:
             return "Invalid API URL."
         case .invalidResponse:

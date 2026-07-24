@@ -62,7 +62,7 @@ class WidgetViewModel: ObservableObject {
                 self.previousSnapshot = newSnapshot
                 self.snapshot = newSnapshot
             } catch let error as APIError {
-                if error == .missingCredential || error == .unauthorized {
+                if error == .missingCookie || error == .unauthorized {
                     self.errorMsg = "Please log in to Claude."
                     LoginWindowController.shared.showLogin()
                 } else {
@@ -85,20 +85,19 @@ class WidgetViewModel: ObservableObject {
     }
     
     private func checkAndNotifyIfNeeded(old: UsageSnapshot?, new: UsageSnapshot) {
-        let fiveHourWasRed = old?.fiveHour.severity == .red
-        let fiveHourIsRed = new.fiveHour.severity == .red
+        // Iterate all groups and windows to find ones that just turned red
+        let oldWindows = old?.groups.flatMap { $0.windows } ?? []
+        let newWindows = new.groups.flatMap { $0.windows }
         
-        if !fiveHourWasRed && fiveHourIsRed {
-            let percentStr = String(format: "%.1f", 100 - new.fiveHour.percentRemaining)
-            sendNotification(title: "Claude Usage Alert", body: "5-Hour window is running low (" + percentStr + "% used).")
-        }
-        
-        let sevenDayWasRed = old?.sevenDay.severity == .red
-        let sevenDayIsRed = new.sevenDay.severity == .red
-        
-        if !sevenDayWasRed && sevenDayIsRed {
-            let percentStr = String(format: "%.1f", 100 - new.sevenDay.percentRemaining)
-            sendNotification(title: "Claude Usage Alert", body: "7-Day window is running low (" + percentStr + "% used).")
+        for newWin in newWindows {
+            if newWin.severity == .red {
+                let wasRed = oldWindows.first(where: { $0.kind == newWin.kind })?.severity == .red
+                if !wasRed {
+                    let percentStr = String(format: "%.1f", 100 - newWin.percentRemaining)
+                    let windowName = newWin.kind == .fiveHour ? "5-Hour" : "7-Day"
+                    sendNotification(title: "Usage Alert", body: "\(windowName) window is running low (" + percentStr + "% used).")
+                }
+            }
         }
     }
     
