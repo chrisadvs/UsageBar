@@ -1,11 +1,13 @@
 import Foundation
 
 public struct WindowState: Equatable {
+    public let name: String
     public let percentRemaining: Double
     public let severity: Severity
     public let resetsAtFormatted: String
     
-    public init(percentRemaining: Double, severity: Severity, resetsAtFormatted: String) {
+    public init(name: String, percentRemaining: Double, severity: Severity, resetsAtFormatted: String) {
+        self.name = name
         self.percentRemaining = percentRemaining
         self.severity = severity
         self.resetsAtFormatted = resetsAtFormatted
@@ -16,13 +18,30 @@ public enum Severity: Equatable {
     case green, yellow, red
 }
 
-public struct UsageSnapshot: Equatable {
-    public let fiveHour: WindowState
-    public let sevenDay: WindowState
+public struct UsageGroup: Equatable {
+    public let name: String
+    public let windows: [WindowState]
     
-    public init(fiveHour: WindowState, sevenDay: WindowState) {
-        self.fiveHour = fiveHour
-        self.sevenDay = sevenDay
+    public init(name: String, windows: [WindowState]) {
+        self.name = name
+        self.windows = windows
+    }
+}
+
+public struct UsageSnapshot: Equatable {
+    public let groups: [UsageGroup]
+    
+    public init(groups: [UsageGroup]) {
+        self.groups = groups
+    }
+    
+    // For backward compatibility and UI
+    public var fiveHour: WindowState {
+        return groups.first?.windows.first(where: { $0.name == "five_hour" }) ?? WindowState(name: "five_hour", percentRemaining: 0, severity: .red, resetsAtFormatted: "")
+    }
+    
+    public var sevenDay: WindowState {
+        return groups.first?.windows.first(where: { $0.name == "seven_day" }) ?? WindowState(name: "seven_day", percentRemaining: 0, severity: .red, resetsAtFormatted: "")
     }
 }
 
@@ -48,13 +67,15 @@ public struct UsageParser {
         
         let response = try decoder.decode(UsageResponse.self, from: json)
         
-        let fiveHourState = Self.convert(window: response.five_hour, now: now)
-        let sevenDayState = Self.convert(window: response.seven_day, now: now)
+        let fiveHourState = Self.convert(name: "five_hour", window: response.five_hour, now: now)
+        let sevenDayState = Self.convert(name: "seven_day", window: response.seven_day, now: now)
         
-        return UsageSnapshot(fiveHour: fiveHourState, sevenDay: sevenDayState)
+        return UsageSnapshot(groups: [
+            UsageGroup(name: "Claude", windows: [fiveHourState, sevenDayState])
+        ])
     }
     
-    private static func convert(window: WindowUsage, now: Date) -> WindowState {
+    private static func convert(name: String, window: WindowUsage, now: Date) -> WindowState {
         let percentRemaining = 100.0 - window.utilization
         
         let severity: Severity
@@ -86,6 +107,7 @@ public struct UsageParser {
         }
         
         return WindowState(
+            name: name,
             percentRemaining: percentRemaining,
             severity: severity,
             resetsAtFormatted: formatted

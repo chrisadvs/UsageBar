@@ -90,7 +90,7 @@ struct ContentView: View {
                 Spacer()
 
                 #if DEBUG
-                Button("Debug: Paste Cookie") {
+                Button("Debug: Paste Credential") {
                     viewModel.showDebugInput.toggle()
                 }
                 #endif
@@ -112,15 +112,15 @@ struct ContentView: View {
             #if DEBUG
             if viewModel.showDebugInput {
                 VStack(alignment: .leading) {
-                    Text("Paste raw cookie string (starts with _fbp=...):")
+                    Text("Paste raw credential string:")
                         .font(.caption)
-                    TextEditor(text: $viewModel.cookieInput)
+                    TextEditor(text: $viewModel.credentialInput)
                         .frame(height: 60)
                         .border(Color.gray, width: 1)
                     HStack {
                         Spacer()
-                        Button("Save Cookie & Refresh") {
-                            viewModel.saveCookie()
+                        Button("Save Credential & Refresh") {
+                            viewModel.saveCredential()
                         }
                     }
                 }

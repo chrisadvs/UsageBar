@@ -8,8 +8,8 @@ class WidgetViewModel: ObservableObject {
     @Published var errorMsg: String?
     @Published var isLoading = false
     
-    // Debug properties for manual cookie input
-    @Published var cookieInput: String = ""
+    // Debug properties for manual credential input
+    @Published var credentialInput: String = ""
     @Published var showDebugInput = false
     
     private let apiClient: UsageAPIClient
@@ -62,7 +62,7 @@ class WidgetViewModel: ObservableObject {
                 self.previousSnapshot = newSnapshot
                 self.snapshot = newSnapshot
             } catch let error as APIError {
-                if error == .missingCookie || error == .unauthorized {
+                if error == .missingCredential || error == .unauthorized {
                     self.errorMsg = "Please log in to Claude."
                     LoginWindowController.shared.showLogin()
                 } else {
@@ -77,9 +77,9 @@ class WidgetViewModel: ObservableObject {
         }
     }
     
-    func saveCookie() {
-        credentialProvider.saveCookie(cookieInput.trimmingCharacters(in: .whitespacesAndNewlines))
-        cookieInput = ""
+    func saveCredential() {
+        credentialProvider.saveCredential(credentialInput.trimmingCharacters(in: .whitespacesAndNewlines))
+        credentialInput = ""
         showDebugInput = false
         loadData()
     }
