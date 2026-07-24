@@ -113,17 +113,28 @@ class WidgetViewModel: ObservableObject {
     }
     
     private func checkAndNotifyIfNeeded(old: UsageSnapshot?, new: UsageSnapshot) {
-        // Iterate all groups and windows to find ones that just turned red
-        let oldWindows = old?.groups.flatMap { $0.windows } ?? []
-        let newWindows = new.groups.flatMap { $0.windows }
+        let oldGroups = old?.groups ?? []
+        let newGroups = new.groups
         
-        for newWin in newWindows {
-            if newWin.severity == .red {
-                let wasRed = oldWindows.first(where: { $0.kind == newWin.kind })?.severity == .red
-                if !wasRed {
-                    let percentStr = String(format: "%.1f", 100 - newWin.percentRemaining)
-                    let windowName = newWin.kind == .fiveHour ? "5-Hour" : "7-Day"
-                    sendNotification(title: "Usage Alert", body: "\(windowName) window is running low (" + percentStr + "% used).")
+        for newGroup in newGroups {
+            let oldGroup = oldGroups.first(where: { $0.name == newGroup.name })
+            
+            for newWin in newGroup.windows {
+                if newWin.severity == .red {
+                    let oldWin = oldGroup?.windows.first(where: { $0.kind == newWin.kind })
+                    let wasRed = oldWin?.severity == .red
+                    
+                    if !wasRed {
+                        let percentStr = String(format: "%.1f", 100 - newWin.percentRemaining)
+                        let windowName = newWin.kind == .fiveHour ? "5-Hour" : "Weekly"
+                        let title = "Usage Alert"
+                        
+                        let groupName = newGroup.name ?? ""
+                        let groupContext = groupName.isEmpty ? "" : "\(groupName) "
+                        let body = "\(selectedProvider) — \(groupContext)\(windowName) window is running low (" + percentStr + "% used)."
+                        
+                        sendNotification(title: title, body: body)
+                    }
                 }
             }
         }
