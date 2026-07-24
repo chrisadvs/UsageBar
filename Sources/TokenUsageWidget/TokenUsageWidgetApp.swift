@@ -10,11 +10,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 struct TokenUsageWidgetApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var viewModel = WidgetViewModel()
-    
-    init() {
-        NSApp.setActivationPolicy(.accessory)
-    }
-    
+
     var body: some Scene {
         MenuBarExtra("Token Usage", systemImage: "bolt.fill") {
             ContentView(viewModel: viewModel)
