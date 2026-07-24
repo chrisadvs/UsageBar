@@ -43,7 +43,7 @@ public class UsageAPIClient {
     }
 }
 
-public enum APIError: Error, LocalizedError {
+public enum APIError: Error, LocalizedError, Equatable {
     case missingCookie
     case invalidURL
     case invalidResponse
