@@ -53,37 +53,45 @@ public class AntigravityCredentialProvider: CredentialProvider {
     
     private func extractAccessToken(from data: Data) -> String? {
         var offset = 0
-        var foundCount = 0
         
         while offset < data.count {
             let (tagWire, _) = readVarint(data, at: &offset)
             let wireType = Int(tagWire & 0x07)
+            let fieldNumber = Int(tagWire >> 3)
             
             if wireType == 2 { // length-delimited
                 let (length, _) = readVarint(data, at: &offset)
+                
+                #if DEBUG
+                print("AntigravityCredentialProvider: [Depth 0] field=\(fieldNumber) wireType=\(wireType) len=\(length)")
+                #endif
                 
                 if offset + Int(length) > data.count {
                     break
                 }
                 
                 let fieldData = data.subdata(in: offset..<offset+Int(length))
-                foundCount += 1
                 
-                #if DEBUG
-                print("AntigravityCredentialProvider: Found top-level field \(foundCount), length: \(length)")
-                #endif
-                
-                if let token = searchForAuthSubstructure(in: fieldData) {
+                if let token = searchForAuthSubstructure(in: fieldData, depth: 1) {
                     return token
                 }
                 
                 offset += Int(length)
             } else if wireType == 0 { // varint
                 let _ = readVarint(data, at: &offset)
+                #if DEBUG
+                print("AntigravityCredentialProvider: [Depth 0] field=\(fieldNumber) wireType=\(wireType)")
+                #endif
             } else if wireType == 1 { // 64-bit
                 offset += 8
+                #if DEBUG
+                print("AntigravityCredentialProvider: [Depth 0] field=\(fieldNumber) wireType=\(wireType)")
+                #endif
             } else if wireType == 5 { // 32-bit
                 offset += 4
+                #if DEBUG
+                print("AntigravityCredentialProvider: [Depth 0] field=\(fieldNumber) wireType=\(wireType)")
+                #endif
             } else {
                 break
             }
@@ -91,14 +99,11 @@ public class AntigravityCredentialProvider: CredentialProvider {
         return nil
     }
     
-    private func searchForAuthSubstructure(in data: Data) -> String? {
+    private func searchForAuthSubstructure(in data: Data, depth: Int) -> String? {
         var offset = 0
         var accessToken: String? = nil
         var foundTag2 = false
         var foundTag3 = false
-        var foundTag4 = false
-        
-        var fieldsFound = 0
         
         while offset < data.count {
             let (tagWire, _) = readVarint(data, at: &offset)
@@ -107,8 +112,12 @@ public class AntigravityCredentialProvider: CredentialProvider {
             
             if wireType == 2 {
                 let (length, _) = readVarint(data, at: &offset)
+                var extraInfo = ""
                 
                 if offset + Int(length) > data.count {
+                    #if DEBUG
+                    print("AntigravityCredentialProvider: [Depth \(depth)] field=\(fieldNumber) wireType=\(wireType) len=\(length) - ERROR: truncated")
+                    #endif
                     break
                 }
                 
@@ -117,37 +126,44 @@ public class AntigravityCredentialProvider: CredentialProvider {
                 if fieldNumber == 1 {
                     if let str = String(data: fieldData, encoding: .utf8), str.hasPrefix("ya29.") {
                         accessToken = str
+                        extraInfo = " (matches ya29 prefix: true)"
                     }
                 } else if fieldNumber == 2 {
                     if let str = String(data: fieldData, encoding: .utf8), str == "Bearer" {
                         foundTag2 = true
+                        extraInfo = " (is Bearer)"
                     }
                 } else if fieldNumber == 3 {
                     if let str = String(data: fieldData, encoding: .utf8), str.hasPrefix("1//") {
                         foundTag3 = true
+                        extraInfo = " (matches refresh token prefix: true)"
                     }
-                } else if fieldNumber == 4 {
-                    foundTag4 = true
                 }
                 
-                fieldsFound += 1
+                #if DEBUG
+                print("AntigravityCredentialProvider: [Depth \(depth)] field=\(fieldNumber) wireType=\(wireType) len=\(length)\(extraInfo)")
+                #endif
+                
                 offset += Int(length)
             } else if wireType == 0 {
                 let _ = readVarint(data, at: &offset)
+                #if DEBUG
+                print("AntigravityCredentialProvider: [Depth \(depth)] field=\(fieldNumber) wireType=\(wireType)")
+                #endif
             } else if wireType == 1 {
                 offset += 8
+                #if DEBUG
+                print("AntigravityCredentialProvider: [Depth \(depth)] field=\(fieldNumber) wireType=\(wireType)")
+                #endif
             } else if wireType == 5 {
                 offset += 4
+                #if DEBUG
+                print("AntigravityCredentialProvider: [Depth \(depth)] field=\(fieldNumber) wireType=\(wireType)")
+                #endif
             } else {
                 break
             }
         }
-        
-        #if DEBUG
-        if fieldsFound > 0 {
-            print("AntigravityCredentialProvider: Substructure Check - fields: \(fieldsFound), hasYa29: \(accessToken != nil), hasBearer: \(foundTag2), hasRefresh: \(foundTag3), hasExpiry: \(foundTag4)")
-        }
-        #endif
         
         if accessToken != nil && foundTag2 && foundTag3 {
             return accessToken
@@ -162,7 +178,7 @@ public class AntigravityCredentialProvider: CredentialProvider {
                 let (length, _) = readVarint(data, at: &offset)
                 if offset + Int(length) <= data.count {
                     let fieldData = data.subdata(in: offset..<offset+Int(length))
-                    if let token = searchForAuthSubstructure(in: fieldData) {
+                    if let token = searchForAuthSubstructure(in: fieldData, depth: depth + 1) {
                         return token
                     }
                 }

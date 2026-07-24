@@ -27,8 +27,7 @@ struct TokenUsageWidgetApp: App {
                     Image(nsImage: viewModel.providerIcon())
                         .resizable()
                         .frame(width: 16, height: 16)
-                    Text(label)
-                    Text(String(format: "%.0f%%", worstPercent))
+                    Text("\(label) \(String(format: "%.0f%%", worstPercent))")
                 }
                 .foregroundColor(color(for: worstSeverity))
             } else {
