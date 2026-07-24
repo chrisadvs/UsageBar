@@ -20,11 +20,17 @@ struct TokenUsageWidgetApp: App {
                 let worstPercent = min(snapshot.fiveHour.percentRemaining, snapshot.sevenDay.percentRemaining)
                 let worstSeverity = snapshot.fiveHour.severity == .red || snapshot.sevenDay.severity == .red ? Severity.red :
                                     (snapshot.fiveHour.severity == .yellow || snapshot.sevenDay.severity == .yellow ? Severity.yellow : Severity.green)
-                
-                Text(String(format: "%.0f%%", worstPercent))
-                    .foregroundColor(color(for: worstSeverity))
+
+                HStack(spacing: 3) {
+                    Image(systemName: "bolt.fill")
+                    Text(String(format: "%.0f%%", worstPercent))
+                }
+                .foregroundColor(color(for: worstSeverity))
             } else {
-                Text("TU")
+                HStack(spacing: 3) {
+                    Image(systemName: "bolt.fill")
+                    Text("TU")
+                }
             }
         }
         .menuBarExtraStyle(.window)
