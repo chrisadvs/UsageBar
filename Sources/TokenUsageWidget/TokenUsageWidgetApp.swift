@@ -86,12 +86,14 @@ struct ContentView: View {
                 Button(action: { viewModel.loadData() }) {
                     Label("Refresh", systemImage: "arrow.clockwise")
                 }
-                
+
                 Spacer()
-                
+
+                #if DEBUG
                 Button("Debug: Paste Cookie") {
                     viewModel.showDebugInput.toggle()
                 }
+                #endif
             }
             
             HStack {
@@ -107,6 +109,7 @@ struct ContentView: View {
                 }
             }
             
+            #if DEBUG
             if viewModel.showDebugInput {
                 VStack(alignment: .leading) {
                     Text("Paste raw cookie string (starts with _fbp=...):")
@@ -123,6 +126,7 @@ struct ContentView: View {
                 }
                 .padding(.top, 8)
             }
+            #endif
         }
         .padding()
         .frame(width: 350)

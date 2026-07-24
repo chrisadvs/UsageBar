@@ -22,7 +22,25 @@ public class WKWebViewCredentialProvider: CredentialProvider {
     }
     
     public func saveCookie(_ cookie: String) {
-        // Debug fallback
+        // Debug fallback: manually seed the WKWebView cookie jar from a raw
+        // "name=value; name2=value2" string pasted from browser DevTools.
+        let pairs = cookie.split(separator: ";").map { $0.trimmingCharacters(in: .whitespaces) }
+        for pair in pairs {
+            guard let equalsIndex = pair.firstIndex(of: "=") else { continue }
+            let name = String(pair[pair.startIndex..<equalsIndex])
+            let value = String(pair[pair.index(after: equalsIndex)...])
+            guard !name.isEmpty else { continue }
+
+            if let httpCookie = HTTPCookie(properties: [
+                .domain: ".claude.ai",
+                .path: "/",
+                .name: name,
+                .value: value,
+                .secure: true
+            ]) {
+                WKWebsiteDataStore.default().httpCookieStore.setCookie(httpCookie)
+            }
+        }
     }
 }
 
