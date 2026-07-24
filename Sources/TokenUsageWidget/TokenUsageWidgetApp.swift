@@ -12,8 +12,10 @@ struct TokenUsageWidgetApp: App {
     @StateObject private var viewModel = WidgetViewModel()
 
     var body: some Scene {
-        MenuBarExtra("Token Usage", systemImage: "bolt.fill") {
+        MenuBarExtra {
             ContentView(viewModel: viewModel)
+        } label: {
+            Text("TU")
         }
         .menuBarExtraStyle(.window)
     }
