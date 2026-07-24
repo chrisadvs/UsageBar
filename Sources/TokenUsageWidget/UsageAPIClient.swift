@@ -10,7 +10,7 @@ public class UsageAPIClient {
     }
     
     public func fetchUsage() async throws -> UsageSnapshot {
-        guard let cookie = credentialProvider.getCookie(), !cookie.isEmpty else {
+        guard let cookie = await credentialProvider.getCookie(), !cookie.isEmpty else {
             throw APIError.missingCookie
         }
         

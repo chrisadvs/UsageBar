@@ -1,4 +1,5 @@
 import SwiftUI
+import ServiceManagement
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -15,17 +16,47 @@ struct TokenUsageWidgetApp: App {
         MenuBarExtra {
             ContentView(viewModel: viewModel)
         } label: {
-            Text("TU")
+            if let snapshot = viewModel.snapshot {
+                let worstPercent = min(snapshot.fiveHour.percentRemaining, snapshot.sevenDay.percentRemaining)
+                let worstSeverity = snapshot.fiveHour.severity == .red || snapshot.sevenDay.severity == .red ? Severity.red :
+                                    (snapshot.fiveHour.severity == .yellow || snapshot.sevenDay.severity == .yellow ? Severity.yellow : Severity.green)
+                
+                Text(String(format: "%.0f%%", worstPercent))
+                    .foregroundColor(color(for: worstSeverity))
+            } else {
+                Text("TU")
+            }
         }
         .menuBarExtraStyle(.window)
+    }
+    
+    private func color(for severity: Severity) -> Color {
+        switch severity {
+        case .green: return .green
+        case .yellow: return .orange
+        case .red: return .red
+        }
     }
 }
 
 struct ContentView: View {
     @ObservedObject var viewModel: WidgetViewModel
+    @AppStorage("launchAtLogin") private var launchAtLogin = true
     
     var body: some View {
         VStack(spacing: 12) {
+            HStack {
+                Text("Provider:")
+                    .font(.headline)
+                Picker("", selection: .constant("Claude")) {
+                    Text("Claude").tag("Claude")
+                }
+                .pickerStyle(.menu)
+                .frame(width: 120)
+                Spacer()
+            }
+            Divider()
+            
             if viewModel.isLoading && viewModel.snapshot == nil {
                 ProgressView("Loading...")
             } else if let snapshot = viewModel.snapshot {
@@ -55,6 +86,15 @@ struct ContentView: View {
                 Button("Debug: Paste Cookie") {
                     viewModel.showDebugInput.toggle()
                 }
+            }
+            
+            HStack {
+                Toggle("Launch at Login", isOn: $launchAtLogin)
+                    .onChange(of: launchAtLogin) { _, newValue in
+                        updateLaunchAtLoginStatus(newValue)
+                    }
+                
+                Spacer()
                 
                 Button("Quit") {
                     NSApplication.shared.terminate(nil)
@@ -82,6 +122,23 @@ struct ContentView: View {
         .frame(width: 350)
         .onAppear {
             viewModel.loadData()
+            updateLaunchAtLoginStatus(launchAtLogin)
+        }
+    }
+    
+    private func updateLaunchAtLoginStatus(_ enabled: Bool) {
+        do {
+            if enabled {
+                if SMAppService.mainApp.status == .notRegistered {
+                    try SMAppService.mainApp.register()
+                }
+            } else {
+                if SMAppService.mainApp.status == .enabled {
+                    try SMAppService.mainApp.unregister()
+                }
+            }
+        } catch {
+            print("Failed to update SMAppService: \\(error)")
         }
     }
 }

@@ -1,8 +1,29 @@
-import Foundation
+import WebKit
 
 public protocol CredentialProvider {
-    func getCookie() -> String?
+    func getCookie() async -> String?
     func saveCookie(_ cookie: String)
+}
+
+public class WKWebViewCredentialProvider: CredentialProvider {
+    public init() {}
+    
+    public func getCookie() async -> String? {
+        await withCheckedContinuation { continuation in
+            DispatchQueue.main.async {
+                WKWebsiteDataStore.default().httpCookieStore.getAllCookies { cookies in
+                    // Claude uses several cookies, but sessionKey is the most critical.
+                    // Joining all of them is standard.
+                    let cookieString = cookies.map { $0.name + "=" + $0.value }.joined(separator: "; ")
+                    continuation.resume(returning: cookieString.isEmpty ? nil : cookieString)
+                }
+            }
+        }
+    }
+    
+    public func saveCookie(_ cookie: String) {
+        // Debug fallback
+    }
 }
 
 public class KeychainCredentialProvider: CredentialProvider {
