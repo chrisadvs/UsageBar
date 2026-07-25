@@ -22,9 +22,11 @@ class WidgetViewModel: ObservableObject {
     
     private let claudeApiClient: UsageAPIClient
     private let antigravityApiClient: AntigravityUsageAPIClient
+    private let geminiWebApiClient: GeminiWebUsageAPIClient
     
     private let claudeCredentialProvider: CredentialProvider
     private let antigravityCredentialProvider: CredentialProvider
+    private let geminiWebCredentialProvider: CredentialProvider
     
     private var previousSnapshot: UsageSnapshot?
     
@@ -36,9 +38,11 @@ class WidgetViewModel: ObservableObject {
         
         self.claudeCredentialProvider = WKWebViewCredentialProvider()
         self.antigravityCredentialProvider = AntigravityCredentialProvider.shared
+        self.geminiWebCredentialProvider = GeminiWebCredentialProvider()
         
         self.claudeApiClient = UsageAPIClient(credentialProvider: claudeCredentialProvider, orgId: "0e15182b-a6f3-496b-aebb-23ec37dbe6be")
         self.antigravityApiClient = AntigravityUsageAPIClient(credentialProvider: antigravityCredentialProvider)
+        self.geminiWebApiClient = GeminiWebUsageAPIClient(credentialProvider: geminiWebCredentialProvider)
         
         requestNotificationPermission()
         startPolling()
@@ -48,6 +52,10 @@ class WidgetViewModel: ObservableObject {
         }
         
         AntigravityOAuthController.shared.onLoginSuccess = { [weak self] in
+            self?.loadData()
+        }
+        
+        GeminiLoginWindowController.shared.onLoginSuccess = { [weak self] in
             self?.loadData()
         }
     }
@@ -81,6 +89,8 @@ class WidgetViewModel: ObservableObject {
                 let newSnapshot: UsageSnapshot
                 if selectedProvider == "Claude" {
                     newSnapshot = try await claudeApiClient.fetchUsage()
+                } else if selectedProvider == "Gemini" {
+                    newSnapshot = try await geminiWebApiClient.fetchUsage()
                 } else {
                     newSnapshot = try await antigravityApiClient.fetchUsage()
                 }
@@ -93,6 +103,8 @@ class WidgetViewModel: ObservableObject {
                     self.errorMsg = "Please log in to \(selectedProvider)."
                     if selectedProvider == "Claude" {
                         LoginWindowController.shared.showLogin()
+                    } else if selectedProvider == "Gemini" {
+                        GeminiLoginWindowController.shared.showLogin()
                     } else {
                         AntigravityOAuthController.shared.startLogin()
                     }
@@ -109,7 +121,14 @@ class WidgetViewModel: ObservableObject {
     }
     
     func saveCredential() {
-        let provider = selectedProvider == "Claude" ? claudeCredentialProvider : antigravityCredentialProvider
+        let provider: CredentialProvider
+        if selectedProvider == "Claude" {
+            provider = claudeCredentialProvider
+        } else if selectedProvider == "Gemini" {
+            provider = geminiWebCredentialProvider
+        } else {
+            provider = antigravityCredentialProvider
+        }
         provider.saveCredential(credentialInput.trimmingCharacters(in: .whitespacesAndNewlines))
         credentialInput = ""
         showDebugInput = false
@@ -117,8 +136,13 @@ class WidgetViewModel: ObservableObject {
     }
     
     func providerIcon() -> NSImage {
-        let path = selectedProvider == "Claude" ? "/Applications/Claude.app" : "/Applications/Antigravity IDE.app"
-        return NSWorkspace.shared.icon(forFile: path)
+        if selectedProvider == "Claude" {
+            return NSWorkspace.shared.icon(forFile: "/Applications/Claude.app")
+        } else if selectedProvider == "Gemini" {
+            return NSImage(systemSymbolName: "sparkles", accessibilityDescription: "Gemini") ?? NSImage()
+        } else {
+            return NSWorkspace.shared.icon(forFile: "/Applications/Antigravity IDE.app")
+        }
     }
     
     private func checkAndNotifyIfNeeded(old: UsageSnapshot?, new: UsageSnapshot) {

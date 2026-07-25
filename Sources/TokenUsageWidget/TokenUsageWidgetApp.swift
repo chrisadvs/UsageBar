@@ -62,6 +62,7 @@ struct ContentView: View {
                     .font(.headline)
                 Picker("", selection: $viewModel.selectedProvider) {
                     Text("Claude").tag("Claude")
+                    Text("Gemini").tag("Gemini")
                     // Antigravity paused 2026-07-24 — see Ticket 14 Status. Code stays wired, just not selectable.
                 }
                 .pickerStyle(.menu)
