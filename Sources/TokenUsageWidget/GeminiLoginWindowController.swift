@@ -40,8 +40,11 @@ public class GeminiLoginWindowController: NSObject, WKNavigationDelegate {
         guard let url = webView.url?.absoluteString else { return }
         if url.starts(with: "https://gemini.google.com/app") {
             WKWebsiteDataStore.default().httpCookieStore.getAllCookies { [weak self] cookies in
-                let hasCookie = cookies.contains { $0.domain.contains("google.com") }
-                if hasCookie {
+                let authCookieNames: Set<String> = ["SID", "__Secure-1PSID", "__Secure-3PSID", "HSID", "SSID"]
+                let hasAuthCookie = cookies.contains { cookie in
+                    cookie.domain.contains("google.com") && authCookieNames.contains(cookie.name) && !cookie.value.isEmpty
+                }
+                if hasAuthCookie {
                     DispatchQueue.main.async {
                         self?.window?.close()
                         self?.onLoginSuccess?()
