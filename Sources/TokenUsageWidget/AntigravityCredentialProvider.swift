@@ -41,26 +41,26 @@ public class AntigravityCredentialProvider: CredentialProvider {
     }
     
     public func saveRefreshToken(_ token: String) {
-        let tag = "com.chris.TokenUsageWidget.AntigravityRefreshToken".data(using: .utf8)!
+        let account = "com.chris.TokenUsageWidget.AntigravityRefreshToken"
         let query: [String: Any] = [
-            kSecClass as String: kSecClassKey,
-            kSecAttrApplicationTag as String: tag,
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: account
         ]
         SecItemDelete(query as CFDictionary)
         
         let addQuery: [String: Any] = [
-            kSecClass as String: kSecClassKey,
-            kSecAttrApplicationTag as String: tag,
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: account,
             kSecValueData as String: token.data(using: .utf8)!
         ]
         SecItemAdd(addQuery as CFDictionary, nil)
     }
     
     public func getRefreshToken() -> String? {
-        let tag = "com.chris.TokenUsageWidget.AntigravityRefreshToken".data(using: .utf8)!
+        let account = "com.chris.TokenUsageWidget.AntigravityRefreshToken"
         let query: [String: Any] = [
-            kSecClass as String: kSecClassKey,
-            kSecAttrApplicationTag as String: tag,
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: account,
             kSecReturnData as String: true
         ]
         

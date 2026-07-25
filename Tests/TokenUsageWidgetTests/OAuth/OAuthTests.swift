@@ -105,4 +105,14 @@ final class OAuthTests: XCTestCase {
         let token = await provider.getCredential()
         XCTAssertEqual(token, "ya29.new_fake_access_token")
     }
+    
+    func testKeychainStorage() {
+        let provider = AntigravityCredentialProvider.shared
+        let fakeToken = "1//real_keychain_test_token_\(UUID().uuidString)"
+        
+        provider.saveRefreshToken(fakeToken)
+        let retrieved = provider.getRefreshToken()
+        
+        XCTAssertEqual(retrieved, fakeToken, "Keychain should successfully store and retrieve the token using kSecClassGenericPassword")
+    }
 }
