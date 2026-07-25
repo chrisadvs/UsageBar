@@ -85,11 +85,12 @@ class WidgetViewModel: ObservableObject {
         errorMsg = nil
         
         Task {
+            let requestProvider = self.selectedProvider
             do {
                 let newSnapshot: UsageSnapshot
-                if selectedProvider == "Claude" {
+                if requestProvider == "Claude" {
                     newSnapshot = try await claudeApiClient.fetchUsage()
-                } else if selectedProvider == "Gemini" {
+                } else if requestProvider == "Gemini" {
                     newSnapshot = try await geminiWebApiClient.fetchUsage()
                 } else {
                     newSnapshot = try await antigravityApiClient.fetchUsage()
@@ -100,10 +101,10 @@ class WidgetViewModel: ObservableObject {
                 self.snapshot = newSnapshot
             } catch let error as APIError {
                 if error == .missingCookie || error == .unauthorized {
-                    self.errorMsg = "Please log in to \(selectedProvider)."
-                    if selectedProvider == "Claude" {
+                    self.errorMsg = "Please log in to \(requestProvider)."
+                    if requestProvider == "Claude" {
                         LoginWindowController.shared.showLogin()
-                    } else if selectedProvider == "Gemini" {
+                    } else if requestProvider == "Gemini" {
                         GeminiLoginWindowController.shared.showLogin()
                     } else {
                         AntigravityOAuthController.shared.startLogin()
