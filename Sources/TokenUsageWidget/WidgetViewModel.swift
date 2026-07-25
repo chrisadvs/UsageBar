@@ -29,7 +29,10 @@ class WidgetViewModel: ObservableObject {
     private var previousSnapshot: UsageSnapshot?
     
     init() {
-        self.selectedProvider = UserDefaults.standard.string(forKey: "selectedProvider") ?? "Claude"
+        let storedProvider = UserDefaults.standard.string(forKey: "selectedProvider") ?? "Claude"
+        // Antigravity paused 2026-07-24 (see Ticket 14) — not selectable in the UI anymore;
+        // guard against a stale UserDefaults value from before the pause leaving the Picker unmatched.
+        self.selectedProvider = storedProvider == "Antigravity" ? "Claude" : storedProvider
         
         self.claudeCredentialProvider = WKWebViewCredentialProvider()
         self.antigravityCredentialProvider = AntigravityCredentialProvider.shared
