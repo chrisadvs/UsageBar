@@ -32,7 +32,7 @@ class WidgetViewModel: ObservableObject {
         self.selectedProvider = UserDefaults.standard.string(forKey: "selectedProvider") ?? "Claude"
         
         self.claudeCredentialProvider = WKWebViewCredentialProvider()
-        self.antigravityCredentialProvider = AntigravityCredentialProvider()
+        self.antigravityCredentialProvider = AntigravityCredentialProvider.shared
         
         self.claudeApiClient = UsageAPIClient(credentialProvider: claudeCredentialProvider, orgId: "0e15182b-a6f3-496b-aebb-23ec37dbe6be")
         self.antigravityApiClient = AntigravityUsageAPIClient(credentialProvider: antigravityCredentialProvider)
@@ -41,6 +41,10 @@ class WidgetViewModel: ObservableObject {
         startPolling()
         
         LoginWindowController.shared.onLoginSuccess = { [weak self] in
+            self?.loadData()
+        }
+        
+        AntigravityOAuthController.shared.onLoginSuccess = { [weak self] in
             self?.loadData()
         }
     }
@@ -86,6 +90,8 @@ class WidgetViewModel: ObservableObject {
                     self.errorMsg = "Please log in to \(selectedProvider)."
                     if selectedProvider == "Claude" {
                         LoginWindowController.shared.showLogin()
+                    } else {
+                        AntigravityOAuthController.shared.startLogin()
                     }
                 } else {
                     self.errorMsg = error.localizedDescription

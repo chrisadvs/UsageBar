@@ -1,154 +1,108 @@
 import Foundation
-import SQLite3
+import Security
 
 public class AntigravityCredentialProvider: CredentialProvider {
+    public static let shared = AntigravityCredentialProvider()
+    
     private var manualToken: String?
+    private var currentAccessToken: String?
+    private var accessTokenExpiry: Date?
     
     public init() {}
     
     public func getCredential() async -> String? {
-        // Debug fallback
-        if let manualToken = manualToken {
-            return manualToken
+        if let manual = manualToken {
+            return manual
         }
         
-        let dbPath = NSString(string: "~/Library/Application Support/Antigravity IDE/User/globalStorage/state.vscdb").expandingTildeInPath
-        
-        guard let base64String = readOauthToken(dbPath: dbPath) else {
-            return nil
+        if let token = currentAccessToken, let expiry = accessTokenExpiry, Date() < expiry {
+            return token
         }
         
-        guard let data = Data(base64Encoded: base64String) else {
-            return nil
+        if let refreshToken = getRefreshToken() {
+            do {
+                let newToken = try await refreshAccessToken(refreshToken: refreshToken)
+                return newToken
+            } catch {
+                return nil
+            }
         }
         
-        return extractAccessToken(from: data)
+        return nil
     }
     
     public func saveCredential(_ credential: String) {
         self.manualToken = credential
     }
     
-    private func readOauthToken(dbPath: String) -> String? {
-        var db: OpaquePointer?
-        if sqlite3_open_v2(dbPath, &db, SQLITE_OPEN_READONLY, nil) != SQLITE_OK {
-            return nil
-        }
-        defer { sqlite3_close(db) }
-        
-        let query = "SELECT value FROM ItemTable WHERE key = 'antigravityUnifiedStateSync.oauthToken';"
-        var stmt: OpaquePointer?
-        if sqlite3_prepare_v2(db, query, -1, &stmt, nil) != SQLITE_OK {
-            return nil
-        }
-        defer { sqlite3_finalize(stmt) }
-        
-        if sqlite3_step(stmt) == SQLITE_ROW {
-            if let cString = sqlite3_column_text(stmt, 0) {
-                return String(cString: cString)
-            }
-        }
-        return nil
+    public func setAccessToken(_ token: String, expiry: Date) {
+        self.currentAccessToken = token
+        self.accessTokenExpiry = expiry
     }
     
-    private func extractAccessToken(from data: Data) -> String? {
-        return scanAllFields(in: data, depth: 0)
+    public func saveRefreshToken(_ token: String) {
+        let tag = "com.chris.TokenUsageWidget.AntigravityRefreshToken".data(using: .utf8)!
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassKey,
+            kSecAttrApplicationTag as String: tag,
+        ]
+        SecItemDelete(query as CFDictionary)
+        
+        let addQuery: [String: Any] = [
+            kSecClass as String: kSecClassKey,
+            kSecAttrApplicationTag as String: tag,
+            kSecValueData as String: token.data(using: .utf8)!
+        ]
+        SecItemAdd(addQuery as CFDictionary, nil)
     }
     
-    private func scanAllFields(in data: Data, depth: Int) -> String? {
-        var offset = 0
-        var foundToken: String? = nil
+    public func getRefreshToken() -> String? {
+        let tag = "com.chris.TokenUsageWidget.AntigravityRefreshToken".data(using: .utf8)!
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassKey,
+            kSecAttrApplicationTag as String: tag,
+            kSecReturnData as String: true
+        ]
         
-        while offset < data.count {
-            let (tagWire, _) = readVarint(data, at: &offset)
-            let wireType = Int(tagWire & 0x07)
-            let fieldNumber = Int(tagWire >> 3)
-            
-            if wireType == 2 {
-                let (length, _) = readVarint(data, at: &offset)
-                var extraInfo = ""
-                
-                if offset + Int(length) > data.count {
-                    #if DEBUG
-                    print("AntigravityCredentialProvider: [Depth \(depth)] field=\(fieldNumber) wireType=\(wireType) len=\(length) - ERROR: truncated")
-                    #endif
-                    break
-                }
-                
-                let fieldData = data.subdata(in: offset..<offset+Int(length))
-                
-                let utf8Str = String(data: fieldData, encoding: .utf8)
-                let isUtf8 = (utf8Str != nil)
-                let hasYa29 = utf8Str?.contains("ya29.") ?? false
-                
-                #if DEBUG
-                print("AntigravityCredentialProvider: [Depth \(depth)] field=\(fieldNumber) len=\(length) isUtf8=\(isUtf8) hasYa29=\(hasYa29)")
-                #endif
-                
-                if hasYa29 {
-                    if let json = try? JSONSerialization.jsonObject(with: fieldData, options: []) as? [String: Any] {
-                        let candidateToken = (json["access_token"] as? String) ?? (json["accessToken"] as? String)
-                        
-                        if let token = candidateToken, token.hasPrefix("ya29.") {
-                            #if DEBUG
-                            print("AntigravityCredentialProvider: Successfully extracted and validated JSON access token!")
-                            #endif
-                            if foundToken == nil {
-                                foundToken = token
-                            }
-                        }
-                    }
-                }
-                
-                // Recurse into this field if we haven't found a token yet
-                if foundToken == nil, let nestedToken = scanAllFields(in: fieldData, depth: depth + 1) {
-                    foundToken = nestedToken
-                }
-                
-                offset += Int(length)
-            } else if wireType == 0 {
-                let _ = readVarint(data, at: &offset)
-                #if DEBUG
-                print("AntigravityCredentialProvider: [Depth \(depth)] field=\(fieldNumber) wireType=\(wireType)")
-                #endif
-            } else if wireType == 1 {
-                offset += 8
-                #if DEBUG
-                print("AntigravityCredentialProvider: [Depth \(depth)] field=\(fieldNumber) wireType=\(wireType)")
-                #endif
-            } else if wireType == 5 {
-                offset += 4
-                #if DEBUG
-                print("AntigravityCredentialProvider: [Depth \(depth)] field=\(fieldNumber) wireType=\(wireType)")
-                #endif
-            } else {
-                break
-            }
-        }
-        
-        return foundToken
+        var item: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &item)
+        guard status == errSecSuccess, let data = item as? Data else { return nil }
+        return String(data: data, encoding: .utf8)
     }
     
-    private func readVarint(_ data: Data, at offset: inout Int) -> (UInt64, Int) {
-        var result: UInt64 = 0
-        var shift: UInt64 = 0
-        var bytesRead = 0
+    var urlSession: URLSession = .shared
+    
+    func refreshAccessToken(refreshToken: String) async throws -> String {
+        let url = URL(string: "https://oauth2.googleapis.com/token")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         
-        while offset < data.count {
-            let byte = data[offset]
-            offset += 1
-            bytesRead += 1
-            
-            result |= UInt64(byte & 0x7F) << shift
-            if (byte & 0x80) == 0 {
-                break
-            }
-            shift += 7
-            
-            if shift >= 64 {
-                break
-            }
+        let clientId = "1071006060591-tmhssin2h21lcre235vtolojh4g403ep.apps.googleusercontent.com"
+        
+        var components = URLComponents()
+        components.queryItems = [
+            URLQueryItem(name: "client_id", value: clientId),
+            URLQueryItem(name: "refresh_token", value: refreshToken),
+            URLQueryItem(name: "grant_type", value: "refresh_token")
+        ]
+        
+        request.httpBody = components.query?.data(using: .utf8)
+        
+        let (data, response) = try await urlSession.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            throw APIError.unauthorized
         }
-        return (result, bytesRead)
+        
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let accessToken = json["access_token"] as? String else {
+            throw APIError.invalidResponse
+        }
+        
+        let expiresIn = (json["expires_in"] as? Double) ?? 3599.0
+        let expiryDate = Date().addingTimeInterval(expiresIn - 60)
+        setAccessToken(accessToken, expiry: expiryDate)
+        
+        return accessToken
     }
 }
