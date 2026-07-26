@@ -73,6 +73,7 @@ public class AntigravityCredentialProvider: CredentialProvider {
     var urlSession: URLSession = .shared
     
     func refreshAccessToken(refreshToken: String) async throws -> String {
+        AppLogger.shared.log("[Antigravity] Attempting OAuth access token refresh...", level: .info)
         let url = URL(string: "https://oauth2.googleapis.com/token")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -90,12 +91,20 @@ public class AntigravityCredentialProvider: CredentialProvider {
         request.httpBody = components.query?.data(using: .utf8)
         
         let (data, response) = try await urlSession.data(for: request)
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        guard let httpResponse = response as? HTTPURLResponse else {
+            AppLogger.shared.log("[Antigravity] Invalid non-HTTP response during token refresh.", level: .error)
+            throw APIError.invalidResponse
+        }
+        
+        AppLogger.shared.log("[Antigravity] Token refresh HTTP status: \(httpResponse.statusCode)", level: httpResponse.statusCode == 200 ? .info : .error)
+        
+        guard httpResponse.statusCode == 200 else {
             throw APIError.unauthorized
         }
         
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
               let accessToken = json["access_token"] as? String else {
+            AppLogger.shared.log("[Antigravity] Failed to decode access_token from refresh response.", level: .error)
             throw APIError.invalidResponse
         }
         
@@ -103,6 +112,7 @@ public class AntigravityCredentialProvider: CredentialProvider {
         let expiryDate = Date().addingTimeInterval(expiresIn - 60)
         setAccessToken(accessToken, expiry: expiryDate)
         
+        AppLogger.shared.log("[Antigravity] OAuth access token successfully refreshed.", level: .info)
         return accessToken
     }
 }

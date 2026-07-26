@@ -5,6 +5,7 @@ struct ConfigurationView: View {
     @ObservedObject var viewModel: WidgetViewModel
     @AppStorage("launchAtLogin") private var launchAtLogin = true
     @State private var showDebugSection = false
+    @State private var showLogs = false
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -78,16 +79,23 @@ struct ConfigurationView: View {
             
             Divider()
             
-            // Reserved space for Ticket 21: Log Inspector / Error Inspector
-            VStack(alignment: .leading, spacing: 6) {
+            // Diagnostics Section (Ticket 21)
+            VStack(alignment: .leading, spacing: 8) {
                 Text("Diagnostics")
                     .font(.subheadline.bold())
                     .foregroundColor(.secondary)
                 
-                Text("Log & Error Inspector (Coming in Ticket 21)")
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                    .padding(.vertical, 4)
+                HStack {
+                    Text("In-App Log & Error Inspector")
+                        .font(.body)
+                    Spacer()
+                    Button("View Logs...") {
+                        showLogs = true
+                    }
+                    .sheet(isPresented: $showLogs) {
+                        LogView()
+                    }
+                }
             }
             
             #if DEBUG

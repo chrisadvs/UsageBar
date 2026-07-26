@@ -25,17 +25,23 @@ public class UsageAPIClient: UsageAPIClientProtocol {
         request.addValue("application/json", forHTTPHeaderField: "content-type")
         request.addValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36", forHTTPHeaderField: "user-agent")
         
+        AppLogger.shared.log("[Claude] Sending GET request to usage API...", level: .info)
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {
+            AppLogger.shared.log("[Claude] Invalid non-HTTP response received.", level: .error)
             throw APIError.invalidResponse
         }
         
+        AppLogger.shared.log("[Claude] HTTP status code: \(httpResponse.statusCode)", level: httpResponse.statusCode == 200 ? .info : .warn)
+        
         if httpResponse.statusCode == 401 || httpResponse.statusCode == 403 {
+            AppLogger.shared.log("[Claude] Unauthorized (401/403). Session cookie expired.", level: .error)
             throw APIError.unauthorized
         }
         
         guard httpResponse.statusCode == 200 else {
+            AppLogger.shared.log("[Claude] Server error status code: \(httpResponse.statusCode)", level: .error)
             throw APIError.serverError(statusCode: httpResponse.statusCode)
         }
         

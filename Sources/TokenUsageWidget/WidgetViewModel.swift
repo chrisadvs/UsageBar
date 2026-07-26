@@ -118,12 +118,15 @@ class WidgetViewModel: ObservableObject {
         Task {
             let requestAccountID = self.selectedAccountID
             let currentAccounts = self.accounts
+            AppLogger.shared.log("Initiating usage data refresh for \(currentAccounts.filter { !$0.isPaused }.count) active accounts...", level: .info)
             
             for account in currentAccounts {
                 guard !account.isPaused else { continue }
+                AppLogger.shared.log("Fetching usage for [\(account.id)]...", level: .info)
                 
                 do {
                     let newSnapshot = try await account.apiClient.fetchUsage()
+                    AppLogger.shared.log("Successfully fetched usage for [\(account.id)]", level: .info)
                     
                     if let idx = self.accounts.firstIndex(where: { $0.id == account.id }) {
                         self.checkAndNotifyIfNeeded(account: self.accounts[idx], old: self.accounts[idx].latestSnapshot, new: newSnapshot)
@@ -136,6 +139,7 @@ class WidgetViewModel: ObservableObject {
                 } catch let error as APIError {
                     let errorMessage: String
                     if error == .missingCookie || error == .unauthorized {
+                        AppLogger.shared.log("[\(account.id)] Unauthorized or missing session. Prompting login if active.", level: .warn)
                         errorMessage = "Please log in to \(account.id)."
                         if account.id == requestAccountID {
                             if account.providerType == .claude {
@@ -147,6 +151,7 @@ class WidgetViewModel: ObservableObject {
                             }
                         }
                     } else {
+                        AppLogger.shared.log("[\(account.id)] API error: \(error.localizedDescription)", level: .error)
                         errorMessage = error.localizedDescription
                     }
                     if let idx = self.accounts.firstIndex(where: { $0.id == account.id }) {
@@ -157,6 +162,7 @@ class WidgetViewModel: ObservableObject {
                         }
                     }
                 } catch {
+                    AppLogger.shared.log("[\(account.id)] Unexpected error: \(error.localizedDescription)", level: .error)
                     if let idx = self.accounts.firstIndex(where: { $0.id == account.id }) {
                         self.accounts[idx].latestSnapshot = nil
                         self.accounts[idx].errorMsg = error.localizedDescription
@@ -173,11 +179,13 @@ class WidgetViewModel: ObservableObject {
     }
     
     func saveCredential() {
-        guard let account = accounts.first(where: { $0.id == selectedAccountID }) else { return }
-        account.credentialProvider.saveCredential(credentialInput.trimmingCharacters(in: .whitespacesAndNewlines))
-        credentialInput = ""
-        showDebugInput = false
-        loadData()
+        guard !credentialInput.isEmpty else { return }
+        if let account = accounts.first(where: { $0.id == selectedAccountID }) {
+            account.credentialProvider.saveCredential(credentialInput)
+            credentialInput = ""
+            showDebugInput = false
+            loadData()
+        }
     }
     
     func providerIcon(for account: Account? = nil) -> NSImage {
@@ -193,6 +201,7 @@ class WidgetViewModel: ObservableObject {
     }
     
     private func checkAndNotifyIfNeeded(account: Account, old: UsageSnapshot?, new: UsageSnapshot) {
+        AppLogger.shared.log("[Notification] Checking usage thresholds for [\(account.id)]...", level: .info)
         let oldGroups = old?.groups ?? []
         let newGroups = new.groups
         
@@ -214,6 +223,7 @@ class WidgetViewModel: ObservableObject {
                         let accountName = account.label ?? account.id
                         let body = "\(accountName) — \(groupContext)\(windowName) window is running low (" + percentStr + "% used)."
                         
+                        AppLogger.shared.log("[Notification] Alert triggered for [\(account.id)] (\(windowName) window low: \(percentStr)% used)", level: .warn)
                         sendNotification(title: title, body: body)
                     }
                 }
@@ -222,6 +232,7 @@ class WidgetViewModel: ObservableObject {
     }
     
     private func sendNotification(title: String, body: String) {
+        AppLogger.shared.log("[Notification] Sending OS notification: '\(title)' - '\(body)'", level: .info)
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body

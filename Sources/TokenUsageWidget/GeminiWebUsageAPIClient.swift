@@ -30,13 +30,18 @@ public class GeminiWebUsageAPIClient: UsageAPIClientProtocol {
         let bodyStr = "f.req=[[[\"jSf9Qc\",\"[]\",null,\"generic\"]]]&at=\(creds.at)"
         request.httpBody = bodyStr.data(using: .utf8)
         
+        AppLogger.shared.log("[Gemini] Sending POST request to BardChatUi batchexecute...", level: .info)
         let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let httpResponse = response as? HTTPURLResponse else {
+            AppLogger.shared.log("[Gemini] Invalid non-HTTP response received.", level: .error)
             throw APIError.invalidResponse
         }
         
+        AppLogger.shared.log("[Gemini] HTTP status code: \(httpResponse.statusCode)", level: httpResponse.statusCode == 200 ? .info : .warn)
+        
         if httpResponse.statusCode == 401 || httpResponse.statusCode == 403 {
+            AppLogger.shared.log("[Gemini] Unauthorized (401/403). Invalidating cookie cache.", level: .error)
             if let geminiProvider = credentialProvider as? GeminiWebCredentialProvider {
                 await MainActor.run {
                     geminiProvider.invalidateCache()
@@ -46,16 +51,19 @@ public class GeminiWebUsageAPIClient: UsageAPIClientProtocol {
         }
         
         guard httpResponse.statusCode == 200 else {
+            AppLogger.shared.log("[Gemini] Server error status code: \(httpResponse.statusCode)", level: .error)
             throw APIError.serverError(statusCode: httpResponse.statusCode)
         }
         
         guard let responseString = String(data: data, encoding: .utf8) else {
+            AppLogger.shared.log("[Gemini] Unable to decode response data to string.", level: .error)
             throw APIError.invalidResponse
         }
         
         do {
             return try GeminiWebUsageParser.parse(string: responseString)
         } catch {
+            AppLogger.shared.log("[Gemini] Parse error: \(error.localizedDescription). Invalidating cache.", level: .error)
             if let geminiProvider = credentialProvider as? GeminiWebCredentialProvider {
                 await MainActor.run {
                     geminiProvider.invalidateCache()
