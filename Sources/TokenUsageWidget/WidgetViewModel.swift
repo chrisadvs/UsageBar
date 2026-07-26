@@ -1,11 +1,13 @@
 import SwiftUI
 import Foundation
 import UserNotifications
+import ServiceManagement
 
 @MainActor
 class WidgetViewModel: ObservableObject {
     @Published var accounts: [Account] = [] {
         didSet {
+            saveVisibility()
             updateCurrentSelectionState()
         }
     }
@@ -42,10 +44,12 @@ class WidgetViewModel: ObservableObject {
         let antigravityClient = AntigravityUsageAPIClient(credentialProvider: antigravityCreds)
         let geminiClient = GeminiWebUsageAPIClient(credentialProvider: geminiCreds)
         
+        let savedVisibleIDs = UserDefaults.standard.array(forKey: "visibleAccountIDs") as? [String]
+        
         self.accounts = [
-            Account(id: "Claude", providerType: .claude, credentialProvider: claudeCreds, apiClient: claudeClient, isPaused: false),
-            Account(id: "Gemini", providerType: .gemini, credentialProvider: geminiCreds, apiClient: geminiClient, isPaused: false),
-            Account(id: "Antigravity", providerType: .antigravity, credentialProvider: antigravityCreds, apiClient: antigravityClient, isPaused: true)
+            Account(id: "Claude", providerType: .claude, credentialProvider: claudeCreds, apiClient: claudeClient, isPaused: false, isVisibleInMainPanel: savedVisibleIDs?.contains("Claude") ?? true),
+            Account(id: "Gemini", providerType: .gemini, credentialProvider: geminiCreds, apiClient: geminiClient, isPaused: false, isVisibleInMainPanel: savedVisibleIDs?.contains("Gemini") ?? true),
+            Account(id: "Antigravity", providerType: .antigravity, credentialProvider: antigravityCreds, apiClient: antigravityClient, isPaused: true, isVisibleInMainPanel: savedVisibleIDs?.contains("Antigravity") ?? true)
         ]
         
         updateCurrentSelectionState()
@@ -63,6 +67,12 @@ class WidgetViewModel: ObservableObject {
         GeminiLoginWindowController.shared.onLoginSuccess = { [weak self] in
             self?.loadData()
         }
+    }
+    
+    private func saveVisibility() {
+        guard !accounts.isEmpty else { return }
+        let visibleIDs = accounts.filter { $0.isVisibleInMainPanel }.map { $0.id }
+        UserDefaults.standard.set(visibleIDs, forKey: "visibleAccountIDs")
     }
     
     private func updateCurrentSelectionState() {
@@ -219,5 +229,21 @@ class WidgetViewModel: ObservableObject {
         
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
         UNUserNotificationCenter.current().add(request)
+    }
+    
+    func updateLaunchAtLoginStatus(_ enabled: Bool) {
+        do {
+            if enabled {
+                if SMAppService.mainApp.status == .notRegistered {
+                    try SMAppService.mainApp.register()
+                }
+            } else {
+                if SMAppService.mainApp.status == .enabled {
+                    try SMAppService.mainApp.unregister()
+                }
+            }
+        } catch {
+            print("Failed to update SMAppService: \(error)")
+        }
     }
 }

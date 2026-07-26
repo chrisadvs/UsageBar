@@ -54,6 +54,7 @@ struct TokenUsageWidgetApp: App {
 struct ContentView: View {
     @ObservedObject var viewModel: WidgetViewModel
     @AppStorage("launchAtLogin") private var launchAtLogin = true
+    @State private var showConfiguration = false
     
     var body: some View {
         VStack(spacing: 12) {
@@ -132,69 +133,26 @@ struct ContentView: View {
                 Button(action: { viewModel.loadData() }) {
                     Label("Refresh", systemImage: "arrow.clockwise")
                 }
+                .buttonStyle(.plain)
 
                 Spacer()
 
-                #if DEBUG
-                Button("Debug: Paste Credential") {
-                    viewModel.showDebugInput.toggle()
+                Button(action: { showConfiguration = true }) {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 14))
                 }
-                #endif
-            }
-            
-            HStack {
-                Toggle("Launch at Login", isOn: $launchAtLogin)
-                    .onChange(of: launchAtLogin) { _, newValue in
-                        updateLaunchAtLoginStatus(newValue)
-                    }
-                
-                Spacer()
-                
-                Button("Quit") {
-                    NSApplication.shared.terminate(nil)
+                .buttonStyle(.plain)
+                .help("Configuration")
+                .popover(isPresented: $showConfiguration, arrowEdge: .bottom) {
+                    ConfigurationView(viewModel: viewModel)
                 }
             }
-            
-            #if DEBUG
-            if viewModel.showDebugInput {
-                VStack(alignment: .leading) {
-                    Text("Paste raw credential string:")
-                        .font(.caption)
-                    TextEditor(text: $viewModel.credentialInput)
-                        .frame(height: 60)
-                        .border(Color.gray, width: 1)
-                    HStack {
-                        Spacer()
-                        Button("Save & Refresh") {
-                            viewModel.saveCredential()
-                        }
-                    }
-                }
-                .padding(.top, 8)
-            }
-            #endif
         }
         .padding()
         .frame(width: 350)
         .onAppear {
             viewModel.loadData()
-            updateLaunchAtLoginStatus(launchAtLogin)
-        }
-    }
-    
-    private func updateLaunchAtLoginStatus(_ enabled: Bool) {
-        do {
-            if enabled {
-                if SMAppService.mainApp.status == .notRegistered {
-                    try SMAppService.mainApp.register()
-                }
-            } else {
-                if SMAppService.mainApp.status == .enabled {
-                    try SMAppService.mainApp.unregister()
-                }
-            }
-        } catch {
-            print("Failed to update SMAppService: \\(error)")
+            viewModel.updateLaunchAtLoginStatus(launchAtLogin)
         }
     }
 }

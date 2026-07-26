@@ -29,6 +29,7 @@
 		CA4302E895361BF904DF1A2B /* WidgetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242EB8675DEF503352E3AC40 /* WidgetViewModel.swift */; };
 		D0E0211D55C14E975C49BF7F /* TokenUsageWidgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7243E79530E8C0A5F04C08F7 /* TokenUsageWidgetApp.swift */; };
 		D155E7E2539E17AAC68DFCAB /* LocalOAuthServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B89377E1BFF9E70F9140DFF /* LocalOAuthServer.swift */; };
+		EEC886DE7A040AADCB7BE2B8 /* ConfigurationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4037756A4F5BD17B2175131 /* ConfigurationView.swift */; };
 		FB6E146CC31B10F2E5B6428D /* GeminiWebUsageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88626B72569C8BECF07698 /* GeminiWebUsageParser.swift */; };
 /* End PBXBuildFile section */
 
@@ -59,6 +60,7 @@
 		817E3F64787C393431ABBA82 /* AccountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountTests.swift; sourceTree = "<group>"; };
 		8A88626B72569C8BECF07698 /* GeminiWebUsageParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiWebUsageParser.swift; sourceTree = "<group>"; };
 		9BFED8267EA0AB31F63ADBFB /* LoginWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginWindowController.swift; sourceTree = "<group>"; };
+		A4037756A4F5BD17B2175131 /* ConfigurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationView.swift; sourceTree = "<group>"; };
 		AE9CD5B9855FD5B8D812965C /* UsageAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageAPIClient.swift; sourceTree = "<group>"; };
 		B337F51FAEE910726B20F694 /* TokenUsageWidget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TokenUsageWidget.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B81334DBAD056F30B1ADA597 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 				047D069DE6ADE26967D65998 /* AntigravityUsageAPIClient.swift */,
 				FA5C1CCD8445E0F3250E5A68 /* AntigravityUsageParser.swift */,
 				B81334DBAD056F30B1ADA597 /* Assets.xcassets */,
+				A4037756A4F5BD17B2175131 /* ConfigurationView.swift */,
 				6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */,
 				02658E33F724C7ABDCF7D358 /* GeminiLoginWindowController.swift */,
 				BE4E5C3F3B6AAB22819C4728 /* GeminiWebCredentialProvider.swift */,
@@ -235,6 +238,7 @@
 				9B7631720A4A9A283B8D4AEC /* AntigravityOAuthController.swift in Sources */,
 				C6B411781A00B3443DA21365 /* AntigravityUsageAPIClient.swift in Sources */,
 				64B28CA5A8970010980CD8CB /* AntigravityUsageParser.swift in Sources */,
+				EEC886DE7A040AADCB7BE2B8 /* ConfigurationView.swift in Sources */,
 				4028F323F360770C870195DD /* CredentialProvider.swift in Sources */,
 				1EF9169F75CD06B22923E0D2 /* GeminiLoginWindowController.swift in Sources */,
 				5E722704D2E1C7B8E689DBC2 /* GeminiWebCredentialProvider.swift in Sources */,

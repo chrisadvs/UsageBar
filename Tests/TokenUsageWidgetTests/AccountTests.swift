@@ -52,4 +52,28 @@ class AccountTests: XCTestCase {
         }
         XCTAssertEqual(viewModel.selectedAccountID, "Gemini")
     }
+    
+    @MainActor
+    func testAccountVisibilityPersistence() {
+        UserDefaults.standard.removeObject(forKey: "visibleAccountIDs")
+        
+        var viewModel = WidgetViewModel()
+        XCTAssertTrue(viewModel.accounts.allSatisfy { $0.isVisibleInMainPanel })
+        
+        if let idx = viewModel.accounts.firstIndex(where: { $0.id == "Gemini" }) {
+            viewModel.accounts[idx].isVisibleInMainPanel = false
+        }
+        
+        let savedIDs = UserDefaults.standard.array(forKey: "visibleAccountIDs") as? [String]
+        XCTAssertNotNil(savedIDs)
+        XCTAssertFalse(savedIDs?.contains("Gemini") ?? true)
+        XCTAssertTrue(savedIDs?.contains("Claude") ?? false)
+        
+        viewModel = WidgetViewModel()
+        let gemini = viewModel.accounts.first(where: { $0.id == "Gemini" })
+        XCTAssertEqual(gemini?.isVisibleInMainPanel, false)
+        
+        // Clean up for subsequent tests
+        UserDefaults.standard.removeObject(forKey: "visibleAccountIDs")
+    }
 }
