@@ -4,7 +4,11 @@ import UserNotifications
 
 @MainActor
 class WidgetViewModel: ObservableObject {
-    @Published var accounts: [Account] = []
+    @Published var accounts: [Account] = [] {
+        didSet {
+            updateCurrentSelectionState()
+        }
+    }
     @Published var selectedAccountID: String {
         didSet {
             UserDefaults.standard.set(selectedAccountID, forKey: "selectedProvider")
@@ -62,6 +66,13 @@ class WidgetViewModel: ObservableObject {
     }
     
     private func updateCurrentSelectionState() {
+        if let current = accounts.first(where: { $0.id == selectedAccountID }),
+           (!current.isVisibleInMainPanel || current.isPaused) {
+            if let fallback = accounts.first(where: { $0.isVisibleInMainPanel && !$0.isPaused }) {
+                self.selectedAccountID = fallback.id
+                return
+            }
+        }
         if let account = accounts.first(where: { $0.id == selectedAccountID }) {
             self.snapshot = account.latestSnapshot
             self.errorMsg = account.errorMsg
@@ -159,11 +170,12 @@ class WidgetViewModel: ObservableObject {
         loadData()
     }
     
-    func providerIcon() -> NSImage {
-        guard let account = accounts.first(where: { $0.id == selectedAccountID }) else { return NSImage() }
-        if account.providerType == .claude {
+    func providerIcon(for account: Account? = nil) -> NSImage {
+        let target = account ?? accounts.first(where: { $0.id == selectedAccountID })
+        guard let target = target else { return NSImage() }
+        if target.providerType == .claude {
             return NSWorkspace.shared.icon(forFile: "/Applications/Claude.app")
-        } else if account.providerType == .gemini {
+        } else if target.providerType == .gemini {
             return NSImage(systemSymbolName: "sparkles", accessibilityDescription: "Gemini") ?? NSImage()
         } else {
             return NSWorkspace.shared.icon(forFile: "/Applications/Antigravity IDE.app")

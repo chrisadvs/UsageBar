@@ -37,4 +37,19 @@ class AccountTests: XCTestCase {
         XCTAssertTrue(active.contains { $0.id == "Gemini" })
         XCTAssertFalse(active.contains { $0.id == "Antigravity" })
     }
+    
+    @MainActor
+    func testSelectionFallbackWhenInvisibleOrPaused() {
+        let viewModel = WidgetViewModel()
+        XCTAssertEqual(viewModel.selectedAccountID, "Claude")
+        
+        viewModel.selectedAccountID = "Antigravity"
+        XCTAssertNotEqual(viewModel.selectedAccountID, "Antigravity")
+        XCTAssertEqual(viewModel.selectedAccountID, "Claude")
+        
+        if let idx = viewModel.accounts.firstIndex(where: { $0.id == "Claude" }) {
+            viewModel.accounts[idx].isVisibleInMainPanel = false
+        }
+        XCTAssertEqual(viewModel.selectedAccountID, "Gemini")
+    }
 }

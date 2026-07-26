@@ -57,16 +57,38 @@ struct ContentView: View {
     
     var body: some View {
         VStack(spacing: 12) {
-            HStack {
-                Text("Provider:")
-                    .font(.headline)
-                Picker("", selection: $viewModel.selectedProvider) {
-                    Text("Claude").tag("Claude")
-                    Text("Gemini").tag("Gemini")
-                    // Antigravity paused 2026-07-24 — see Ticket 14 Status. Code stays wired, just not selectable.
+            HStack(spacing: 6) {
+                ForEach(viewModel.accounts.filter { $0.isVisibleInMainPanel }) { account in
+                    let isSelected = (viewModel.selectedAccountID == account.id)
+                    
+                    Button(action: {
+                        if !account.isPaused {
+                            viewModel.selectedAccountID = account.id
+                        }
+                    }) {
+                        HStack(spacing: 6) {
+                            Image(nsImage: viewModel.providerIcon(for: account))
+                                .resizable()
+                                .frame(width: 14, height: 14)
+                            Text(account.label ?? account.id)
+                                .font(.system(size: 13, weight: isSelected ? .medium : .regular))
+                        }
+                        .padding(.vertical, 5)
+                        .padding(.horizontal, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(isSelected ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(.ultraThinMaterial))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .stroke(isSelected ? Color.primary.opacity(0.25) : Color.primary.opacity(0.08), lineWidth: 1)
+                        )
+                        .shadow(color: isSelected ? Color.black.opacity(0.08) : Color.clear, radius: 1, x: 0, y: 1)
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(account.isPaused)
+                    .opacity(account.isPaused ? 0.4 : 1.0)
                 }
-                .pickerStyle(.menu)
-                .frame(width: 120)
                 Spacer()
             }
             Divider()
