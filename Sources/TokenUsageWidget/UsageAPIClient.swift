@@ -1,6 +1,6 @@
 import Foundation
 
-public class UsageAPIClient {
+public class UsageAPIClient: UsageAPIClientProtocol {
     private let credentialProvider: CredentialProvider
     private let orgId: String
     

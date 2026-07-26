@@ -1,6 +1,6 @@
 import Foundation
 
-public class AntigravityUsageAPIClient {
+public class AntigravityUsageAPIClient: UsageAPIClientProtocol {
     private let credentialProvider: CredentialProvider
     
     public init(credentialProvider: CredentialProvider) {

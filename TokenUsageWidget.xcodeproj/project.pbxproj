@@ -10,6 +10,7 @@
 		00EFA7125AC315C627347792 /* UsageAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9CD5B9855FD5B8D812965C /* UsageAPIClient.swift */; };
 		12DC9491BE25F7F44A0D57DB /* UsageSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72F50A63E9A5E2ED104CEA68 /* UsageSnapshot.swift */; };
 		130B4F55012758C6EDE7A700 /* PKCE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ABBCE01D91CD4FC6CBAE5EC /* PKCE.swift */; };
+		14647900ED96DA486A859769 /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D25F4EE10E0E30E9DA8EF5E /* Account.swift */; };
 		1EF9169F75CD06B22923E0D2 /* GeminiLoginWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02658E33F724C7ABDCF7D358 /* GeminiLoginWindowController.swift */; };
 		2A11CCED5AF8F9C71088B3E5 /* GeminiWebUsageAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF1B5A68E8FDF8ACB3F9061F /* GeminiWebUsageAPIClient.swift */; };
 		35464FB53D216DC50DBAE91B /* UsageSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA13822FE222604BD511F1B /* UsageSnapshotTests.swift */; };
@@ -22,6 +23,7 @@
 		9B7631720A4A9A283B8D4AEC /* AntigravityOAuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33481B48194CEDCCB855CF2A /* AntigravityOAuthController.swift */; };
 		A8031F64124761FA867578C4 /* OAuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7131FECA7A4445C253FB70 /* OAuthTests.swift */; };
 		C6B411781A00B3443DA21365 /* AntigravityUsageAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047D069DE6ADE26967D65998 /* AntigravityUsageAPIClient.swift */; };
+		C6C834CDBC95410F5B8445B4 /* AccountTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 817E3F64787C393431ABBA82 /* AccountTests.swift */; };
 		C77D98D6667D219AC47304EA /* AntigravityCredentialProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8044ADCFC367BF2483C17AC7 /* AntigravityCredentialProvider.swift */; };
 		C961187C7A79575312378188 /* GeminiWebUsageParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE03DC980A25F9712FB411D /* GeminiWebUsageParserTests.swift */; };
 		CA4302E895361BF904DF1A2B /* WidgetViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242EB8675DEF503352E3AC40 /* WidgetViewModel.swift */; };
@@ -43,6 +45,7 @@
 /* Begin PBXFileReference section */
 		02658E33F724C7ABDCF7D358 /* GeminiLoginWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiLoginWindowController.swift; sourceTree = "<group>"; };
 		047D069DE6ADE26967D65998 /* AntigravityUsageAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntigravityUsageAPIClient.swift; sourceTree = "<group>"; };
+		1D25F4EE10E0E30E9DA8EF5E /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		242EB8675DEF503352E3AC40 /* WidgetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetViewModel.swift; sourceTree = "<group>"; };
 		2ABBCE01D91CD4FC6CBAE5EC /* PKCE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKCE.swift; sourceTree = "<group>"; };
 		33481B48194CEDCCB855CF2A /* AntigravityOAuthController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntigravityOAuthController.swift; sourceTree = "<group>"; };
@@ -53,6 +56,7 @@
 		7243E79530E8C0A5F04C08F7 /* TokenUsageWidgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenUsageWidgetApp.swift; sourceTree = "<group>"; };
 		72F50A63E9A5E2ED104CEA68 /* UsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshot.swift; sourceTree = "<group>"; };
 		8044ADCFC367BF2483C17AC7 /* AntigravityCredentialProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntigravityCredentialProvider.swift; sourceTree = "<group>"; };
+		817E3F64787C393431ABBA82 /* AccountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountTests.swift; sourceTree = "<group>"; };
 		8A88626B72569C8BECF07698 /* GeminiWebUsageParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiWebUsageParser.swift; sourceTree = "<group>"; };
 		9BFED8267EA0AB31F63ADBFB /* LoginWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginWindowController.swift; sourceTree = "<group>"; };
 		AE9CD5B9855FD5B8D812965C /* UsageAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageAPIClient.swift; sourceTree = "<group>"; };
@@ -96,6 +100,7 @@
 		930724F56780BFB26715E05C /* TokenUsageWidget */ = {
 			isa = PBXGroup;
 			children = (
+				1D25F4EE10E0E30E9DA8EF5E /* Account.swift */,
 				8044ADCFC367BF2483C17AC7 /* AntigravityCredentialProvider.swift */,
 				047D069DE6ADE26967D65998 /* AntigravityUsageAPIClient.swift */,
 				FA5C1CCD8445E0F3250E5A68 /* AntigravityUsageParser.swift */,
@@ -119,6 +124,7 @@
 		9C350C059D5DE080142F5F7D /* TokenUsageWidgetTests */ = {
 			isa = PBXGroup;
 			children = (
+				817E3F64787C393431ABBA82 /* AccountTests.swift */,
 				6F89649C9474C8CFA7B133F7 /* AntigravityUsageParserTests.swift */,
 				6EE03DC980A25F9712FB411D /* GeminiWebUsageParserTests.swift */,
 				FFA13822FE222604BD511F1B /* UsageSnapshotTests.swift */,
@@ -224,6 +230,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				14647900ED96DA486A859769 /* Account.swift in Sources */,
 				C77D98D6667D219AC47304EA /* AntigravityCredentialProvider.swift in Sources */,
 				9B7631720A4A9A283B8D4AEC /* AntigravityOAuthController.swift in Sources */,
 				C6B411781A00B3443DA21365 /* AntigravityUsageAPIClient.swift in Sources */,
@@ -247,6 +254,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C6C834CDBC95410F5B8445B4 /* AccountTests.swift in Sources */,
 				82B2B8C9C1D06B44397CB554 /* AntigravityUsageParserTests.swift in Sources */,
 				C961187C7A79575312378188 /* GeminiWebUsageParserTests.swift in Sources */,
 				A8031F64124761FA867578C4 /* OAuthTests.swift in Sources */,

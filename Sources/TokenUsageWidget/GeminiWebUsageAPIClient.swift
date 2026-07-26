@@ -1,6 +1,6 @@
 import Foundation
 
-public class GeminiWebUsageAPIClient {
+public class GeminiWebUsageAPIClient: UsageAPIClientProtocol {
     private let credentialProvider: CredentialProvider
     
     public init(credentialProvider: CredentialProvider) {

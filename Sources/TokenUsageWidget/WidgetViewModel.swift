@@ -4,46 +4,47 @@ import UserNotifications
 
 @MainActor
 class WidgetViewModel: ObservableObject {
+    @Published var accounts: [Account] = []
+    @Published var selectedAccountID: String {
+        didSet {
+            UserDefaults.standard.set(selectedAccountID, forKey: "selectedProvider")
+            updateCurrentSelectionState()
+        }
+    }
+    
+    // Alias for UI binding compatibility before Ticket 19
+    var selectedProvider: String {
+        get { selectedAccountID }
+        set { selectedAccountID = newValue }
+    }
+    
     @Published var snapshot: UsageSnapshot?
     @Published var errorMsg: String?
     @Published var isLoading = false
-    
-    // Provider Selection
-    @Published var selectedProvider: String {
-        didSet {
-            UserDefaults.standard.set(selectedProvider, forKey: "selectedProvider")
-            loadData()
-        }
-    }
     
     // Debug properties for manual credential input
     @Published var credentialInput: String = ""
     @Published var showDebugInput = false
     
-    private let claudeApiClient: UsageAPIClient
-    private let antigravityApiClient: AntigravityUsageAPIClient
-    private let geminiWebApiClient: GeminiWebUsageAPIClient
-    
-    private let claudeCredentialProvider: CredentialProvider
-    private let antigravityCredentialProvider: CredentialProvider
-    private let geminiWebCredentialProvider: CredentialProvider
-    
-    private var previousSnapshot: UsageSnapshot?
-    
     init() {
         let storedProvider = UserDefaults.standard.string(forKey: "selectedProvider") ?? "Claude"
-        // Antigravity paused 2026-07-24 (see Ticket 14) — not selectable in the UI anymore;
-        // guard against a stale UserDefaults value from before the pause leaving the Picker unmatched.
-        self.selectedProvider = storedProvider == "Antigravity" ? "Claude" : storedProvider
+        self.selectedAccountID = storedProvider == "Antigravity" ? "Claude" : storedProvider
         
-        self.claudeCredentialProvider = WKWebViewCredentialProvider()
-        self.antigravityCredentialProvider = AntigravityCredentialProvider.shared
-        self.geminiWebCredentialProvider = GeminiWebCredentialProvider()
+        let claudeCreds = WKWebViewCredentialProvider()
+        let antigravityCreds = AntigravityCredentialProvider.shared
+        let geminiCreds = GeminiWebCredentialProvider()
         
-        self.claudeApiClient = UsageAPIClient(credentialProvider: claudeCredentialProvider, orgId: "0e15182b-a6f3-496b-aebb-23ec37dbe6be")
-        self.antigravityApiClient = AntigravityUsageAPIClient(credentialProvider: antigravityCredentialProvider)
-        self.geminiWebApiClient = GeminiWebUsageAPIClient(credentialProvider: geminiWebCredentialProvider)
+        let claudeClient = UsageAPIClient(credentialProvider: claudeCreds, orgId: "0e15182b-a6f3-496b-aebb-23ec37dbe6be")
+        let antigravityClient = AntigravityUsageAPIClient(credentialProvider: antigravityCreds)
+        let geminiClient = GeminiWebUsageAPIClient(credentialProvider: geminiCreds)
         
+        self.accounts = [
+            Account(id: "Claude", providerType: .claude, credentialProvider: claudeCreds, apiClient: claudeClient, isPaused: false),
+            Account(id: "Gemini", providerType: .gemini, credentialProvider: geminiCreds, apiClient: geminiClient, isPaused: false),
+            Account(id: "Antigravity", providerType: .antigravity, credentialProvider: antigravityCreds, apiClient: antigravityClient, isPaused: true)
+        ]
+        
+        updateCurrentSelectionState()
         requestNotificationPermission()
         startPolling()
         
@@ -57,6 +58,16 @@ class WidgetViewModel: ObservableObject {
         
         GeminiLoginWindowController.shared.onLoginSuccess = { [weak self] in
             self?.loadData()
+        }
+    }
+    
+    private func updateCurrentSelectionState() {
+        if let account = accounts.first(where: { $0.id == selectedAccountID }) {
+            self.snapshot = account.latestSnapshot
+            self.errorMsg = account.errorMsg
+        } else {
+            self.snapshot = nil
+            self.errorMsg = nil
         }
     }
     
@@ -82,71 +93,84 @@ class WidgetViewModel: ObservableObject {
     func loadData() {
         guard !isLoading else { return }
         isLoading = true
-        errorMsg = nil
         
         Task {
-            let requestProvider = self.selectedProvider
-            do {
-                let newSnapshot: UsageSnapshot
-                if requestProvider == "Claude" {
-                    newSnapshot = try await claudeApiClient.fetchUsage()
-                } else if requestProvider == "Gemini" {
-                    newSnapshot = try await geminiWebApiClient.fetchUsage()
-                } else {
-                    newSnapshot = try await antigravityApiClient.fetchUsage()
-                }
+            let requestAccountID = self.selectedAccountID
+            let currentAccounts = self.accounts
+            
+            for account in currentAccounts {
+                guard !account.isPaused else { continue }
                 
-                self.checkAndNotifyIfNeeded(old: self.previousSnapshot, new: newSnapshot)
-                self.previousSnapshot = newSnapshot
-                self.snapshot = newSnapshot
-            } catch let error as APIError {
-                if error == .missingCookie || error == .unauthorized {
-                    self.errorMsg = "Please log in to \(requestProvider)."
-                    if requestProvider == "Claude" {
-                        LoginWindowController.shared.showLogin()
-                    } else if requestProvider == "Gemini" {
-                        GeminiLoginWindowController.shared.showLogin()
-                    } else {
-                        AntigravityOAuthController.shared.startLogin()
+                do {
+                    let newSnapshot = try await account.apiClient.fetchUsage()
+                    
+                    if let idx = self.accounts.firstIndex(where: { $0.id == account.id }) {
+                        self.checkAndNotifyIfNeeded(account: self.accounts[idx], old: self.accounts[idx].latestSnapshot, new: newSnapshot)
+                        self.accounts[idx].latestSnapshot = newSnapshot
+                        self.accounts[idx].errorMsg = nil
+                        if account.id == self.selectedAccountID {
+                            self.updateCurrentSelectionState()
+                        }
                     }
-                } else {
-                    self.errorMsg = error.localizedDescription
+                } catch let error as APIError {
+                    let errorMessage: String
+                    if error == .missingCookie || error == .unauthorized {
+                        errorMessage = "Please log in to \(account.id)."
+                        if account.id == requestAccountID {
+                            if account.providerType == .claude {
+                                LoginWindowController.shared.showLogin()
+                            } else if account.providerType == .gemini {
+                                GeminiLoginWindowController.shared.showLogin()
+                            } else {
+                                AntigravityOAuthController.shared.startLogin()
+                            }
+                        }
+                    } else {
+                        errorMessage = error.localizedDescription
+                    }
+                    if let idx = self.accounts.firstIndex(where: { $0.id == account.id }) {
+                        self.accounts[idx].latestSnapshot = nil
+                        self.accounts[idx].errorMsg = errorMessage
+                        if account.id == self.selectedAccountID {
+                            self.updateCurrentSelectionState()
+                        }
+                    }
+                } catch {
+                    if let idx = self.accounts.firstIndex(where: { $0.id == account.id }) {
+                        self.accounts[idx].latestSnapshot = nil
+                        self.accounts[idx].errorMsg = error.localizedDescription
+                        if account.id == self.selectedAccountID {
+                            self.updateCurrentSelectionState()
+                        }
+                    }
                 }
-                self.snapshot = nil
-            } catch {
-                self.errorMsg = error.localizedDescription
-                self.snapshot = nil
             }
+            
+            self.updateCurrentSelectionState()
             self.isLoading = false
         }
     }
     
     func saveCredential() {
-        let provider: CredentialProvider
-        if selectedProvider == "Claude" {
-            provider = claudeCredentialProvider
-        } else if selectedProvider == "Gemini" {
-            provider = geminiWebCredentialProvider
-        } else {
-            provider = antigravityCredentialProvider
-        }
-        provider.saveCredential(credentialInput.trimmingCharacters(in: .whitespacesAndNewlines))
+        guard let account = accounts.first(where: { $0.id == selectedAccountID }) else { return }
+        account.credentialProvider.saveCredential(credentialInput.trimmingCharacters(in: .whitespacesAndNewlines))
         credentialInput = ""
         showDebugInput = false
         loadData()
     }
     
     func providerIcon() -> NSImage {
-        if selectedProvider == "Claude" {
+        guard let account = accounts.first(where: { $0.id == selectedAccountID }) else { return NSImage() }
+        if account.providerType == .claude {
             return NSWorkspace.shared.icon(forFile: "/Applications/Claude.app")
-        } else if selectedProvider == "Gemini" {
+        } else if account.providerType == .gemini {
             return NSImage(systemSymbolName: "sparkles", accessibilityDescription: "Gemini") ?? NSImage()
         } else {
             return NSWorkspace.shared.icon(forFile: "/Applications/Antigravity IDE.app")
         }
     }
     
-    private func checkAndNotifyIfNeeded(old: UsageSnapshot?, new: UsageSnapshot) {
+    private func checkAndNotifyIfNeeded(account: Account, old: UsageSnapshot?, new: UsageSnapshot) {
         let oldGroups = old?.groups ?? []
         let newGroups = new.groups
         
@@ -165,7 +189,8 @@ class WidgetViewModel: ObservableObject {
                         
                         let groupName = newGroup.name ?? ""
                         let groupContext = groupName.isEmpty ? "" : "\(groupName) "
-                        let body = "\(selectedProvider) — \(groupContext)\(windowName) window is running low (" + percentStr + "% used)."
+                        let accountName = account.label ?? account.id
+                        let body = "\(accountName) — \(groupContext)\(windowName) window is running low (" + percentStr + "% used)."
                         
                         sendNotification(title: title, body: body)
                     }
