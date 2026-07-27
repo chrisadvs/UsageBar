@@ -5,7 +5,7 @@ import SwiftUI
 class ConfigurationWindowController: NSObject, NSWindowDelegate {
     static let shared = ConfigurationWindowController()
     
-    private var window: NSWindow?
+    private(set) var window: NSWindow?
     
     func showWindow(viewModel: WidgetViewModel) {
         if let win = window {

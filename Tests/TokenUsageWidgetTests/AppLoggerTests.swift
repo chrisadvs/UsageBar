@@ -66,7 +66,7 @@ final class AppLoggerTests: XCTestCase {
         
         // 1. Show window
         controller.showWindow(viewModel: viewModel)
-        let win = controller.value(forKey: "window") as? NSWindow
+        let win = controller.window
         XCTAssertNotNil(win, "Configuration window should be created.")
         XCTAssertTrue(win?.isVisible == true, "Configuration window should be visible.")
         
