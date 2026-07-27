@@ -54,8 +54,26 @@ final class AppLoggerTests: XCTestCase {
         // Ask the hosting view for its fitting size when given a large unbound proposal
         let fittingSize = hostingView.fittingSize
         
-        // Assert that the width of the view does not exceed 420 (allowing a tiny delta for borders/padding if any, e.g. <= 430)
-        XCTAssertLessThanOrEqual(fittingSize.width, 430, "LogView width should be constrained by maxWidth: 420 even when containing extremely long log lines.")
+        // Assert that the width of the view does not exceed 480 (allowing a tiny delta for borders/padding if any, e.g. <= 490)
+        XCTAssertLessThanOrEqual(fittingSize.width, 490, "LogView width should be constrained by maxWidth: 480 even when containing extremely long log lines.")
         XCTAssertGreaterThanOrEqual(fittingSize.width, 350, "LogView should maintain its minWidth of 350.")
+    }
+    
+    @MainActor
+    func testConfigurationWindowControllerWorkflow() {
+        let viewModel = WidgetViewModel()
+        let controller = ConfigurationWindowController.shared
+        
+        // 1. Show window
+        controller.showWindow(viewModel: viewModel)
+        let win = controller.value(forKey: "window") as? NSWindow
+        XCTAssertNotNil(win, "Configuration window should be created.")
+        XCTAssertTrue(win?.isVisible == true, "Configuration window should be visible.")
+        
+        // 2. Simulate refresh while open
+        viewModel.loadData()
+        
+        // 3. Close window
+        controller.closeWindow()
     }
 }

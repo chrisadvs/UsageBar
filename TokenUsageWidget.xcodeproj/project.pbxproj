@@ -18,6 +18,7 @@
 		35464FB53D216DC50DBAE91B /* UsageSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA13822FE222604BD511F1B /* UsageSnapshotTests.swift */; };
 		4028F323F360770C870195DD /* CredentialProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */; };
 		4343881293D1198483F90680 /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF35D59495A8A33F88569B32 /* AppLogger.swift */; };
+		5A31216E9C7C921D28C44087 /* ConfigurationWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89820114486B44B5529263BA /* ConfigurationWindowController.swift */; };
 		5E722704D2E1C7B8E689DBC2 /* GeminiWebCredentialProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4E5C3F3B6AAB22819C4728 /* GeminiWebCredentialProvider.swift */; };
 		64B28CA5A8970010980CD8CB /* AntigravityUsageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5C1CCD8445E0F3250E5A68 /* AntigravityUsageParser.swift */; };
 		662B16896F9DE5165B1BF228 /* LoginWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BFED8267EA0AB31F63ADBFB /* LoginWindowController.swift */; };
@@ -62,6 +63,7 @@
 		72F50A63E9A5E2ED104CEA68 /* UsageSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageSnapshot.swift; sourceTree = "<group>"; };
 		8044ADCFC367BF2483C17AC7 /* AntigravityCredentialProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntigravityCredentialProvider.swift; sourceTree = "<group>"; };
 		817E3F64787C393431ABBA82 /* AccountTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountTests.swift; sourceTree = "<group>"; };
+		89820114486B44B5529263BA /* ConfigurationWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationWindowController.swift; sourceTree = "<group>"; };
 		8A88626B72569C8BECF07698 /* GeminiWebUsageParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiWebUsageParser.swift; sourceTree = "<group>"; };
 		9BFED8267EA0AB31F63ADBFB /* LoginWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginWindowController.swift; sourceTree = "<group>"; };
 		A4037756A4F5BD17B2175131 /* ConfigurationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationView.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				CF35D59495A8A33F88569B32 /* AppLogger.swift */,
 				B81334DBAD056F30B1ADA597 /* Assets.xcassets */,
 				A4037756A4F5BD17B2175131 /* ConfigurationView.swift */,
+				89820114486B44B5529263BA /* ConfigurationWindowController.swift */,
 				6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */,
 				02658E33F724C7ABDCF7D358 /* GeminiLoginWindowController.swift */,
 				BE4E5C3F3B6AAB22819C4728 /* GeminiWebCredentialProvider.swift */,
@@ -249,6 +252,7 @@
 				64B28CA5A8970010980CD8CB /* AntigravityUsageParser.swift in Sources */,
 				4343881293D1198483F90680 /* AppLogger.swift in Sources */,
 				EEC886DE7A040AADCB7BE2B8 /* ConfigurationView.swift in Sources */,
+				5A31216E9C7C921D28C44087 /* ConfigurationWindowController.swift in Sources */,
 				4028F323F360770C870195DD /* CredentialProvider.swift in Sources */,
 				1EF9169F75CD06B22923E0D2 /* GeminiLoginWindowController.swift in Sources */,
 				5E722704D2E1C7B8E689DBC2 /* GeminiWebCredentialProvider.swift in Sources */,

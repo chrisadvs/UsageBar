@@ -54,7 +54,6 @@ struct TokenUsageWidgetApp: App {
 struct ContentView: View {
     @ObservedObject var viewModel: WidgetViewModel
     @AppStorage("launchAtLogin") private var launchAtLogin = true
-    @State private var showConfiguration = false
     
     var body: some View {
         VStack(spacing: 12) {
@@ -137,7 +136,9 @@ struct ContentView: View {
 
                 Spacer()
 
-                Button(action: { showConfiguration = true }) {
+                Button(action: {
+                    ConfigurationWindowController.shared.showWindow(viewModel: viewModel)
+                }) {
                     Image(systemName: "gearshape")
                         .font(.system(size: 14))
                 }
@@ -147,9 +148,6 @@ struct ContentView: View {
         }
         .padding()
         .frame(width: 350)
-        .popover(isPresented: $showConfiguration, attachmentAnchor: .point(.bottom), arrowEdge: .bottom) {
-            ConfigurationView(viewModel: viewModel)
-        }
         .onAppear {
             viewModel.loadData()
             viewModel.updateLaunchAtLoginStatus(launchAtLogin)

@@ -4,7 +4,6 @@ import AppKit
 struct LogView: View {
     @ObservedObject var logger = AppLogger.shared
     @State private var selectedLevelFilter: String = "ALL"
-    @Environment(\.dismiss) private var dismiss
     
     let filterOptions = ["ALL", "INFO", "WARN", "ERROR"]
     
@@ -29,14 +28,7 @@ struct LogView: View {
                 }
                 .pickerStyle(.segmented)
                 .frame(width: 200)
-                
-                Button("Done") {
-                    dismiss()
-                }
-                .keyboardShortcut(.cancelAction)
             }
-            
-            Divider()
             
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 4) {
@@ -73,16 +65,20 @@ struct LogView: View {
                     pasteboard.setString(text, forType: .string)
                 }
                 
-                Spacer()
-                
                 Button("Clear Logs") {
                     logger.clear()
                 }
                 .foregroundColor(.red)
+                
+                Spacer()
+                
+                Button("Close") {
+                    ConfigurationWindowController.shared.closeWindow()
+                }
+                .keyboardShortcut(.cancelAction)
             }
         }
-        .padding()
-        .frame(minWidth: 350, idealWidth: 400, maxWidth: 420, minHeight: 300, idealHeight: 380, maxHeight: 450)
+        .frame(minWidth: 350, idealWidth: 440, maxWidth: 480, minHeight: 300, idealHeight: 380, maxHeight: .infinity)
     }
     
     private func color(for level: LogLevel) -> Color {
