@@ -24,20 +24,26 @@ Because these are undocumented, unofficial endpoints, **this app can break at an
 
 No credentials are stored in plain text: session cookies live in the app's own isolated WebKit storage (the same mechanism Safari/Chrome use), and any long-lived tokens go through the macOS Keychain.
 
-## Building
+## Install
+
+1. Download the latest `.zip` from the [Releases page](https://github.com/chrisadvs/UsageBar/releases/latest).
+2. Unzip it and drag `UsageBar.app` into `/Applications`.
+3. **Right-click the app and choose Open** (don't just double-click) the first time. The app isn't signed with a paid Apple Developer certificate, so macOS Gatekeeper will otherwise refuse to open it with an "unidentified developer" warning. This is only needed once.
+
+## Building from source
+
+For development, or if you'd rather build it yourself than run a downloaded binary.
 
 Requires Xcode and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
 
 ```bash
-git clone <this repo>
+git clone https://github.com/chrisadvs/UsageBar.git
 cd UsageBar
 xcodegen generate
 open TokenUsageWidget.xcodeproj
 ```
 
-Then build and run from Xcode (`Cmd+R`), or archive it (`Product > Archive`) to produce a standalone `.app` you can drag into `/Applications`.
-
-If a prebuilt `.app` is attached to a GitHub Release instead, macOS Gatekeeper will refuse to open it with a plain double-click since it isn't signed with a paid Apple Developer certificate. Right-click the app and choose **Open** instead (only needed the first time).
+Then build and run from Xcode (`Cmd+R`), or archive it (`Product > Archive`) to produce your own standalone `.app`.
 
 ## Supported providers
 
