@@ -73,18 +73,19 @@ struct ContentView: View {
                                 .frame(width: 14, height: 14)
                             Text(account.label ?? account.id)
                                 .font(.system(size: 13, weight: isSelected ? .medium : .regular))
+                                .foregroundColor(isSelected ? .white : .primary)
                         }
                         .padding(.vertical, 5)
                         .padding(.horizontal, 10)
                         .background(
                             RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .fill(isSelected ? AnyShapeStyle(.regularMaterial) : AnyShapeStyle(.ultraThinMaterial))
+                                .fill(isSelected ? AnyShapeStyle(Color.accentColor.opacity(0.85)) : AnyShapeStyle(.ultraThinMaterial))
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 6, style: .continuous)
-                                .stroke(isSelected ? Color.primary.opacity(0.25) : Color.primary.opacity(0.08), lineWidth: 1)
+                                .stroke(isSelected ? Color.white.opacity(0.3) : Color.primary.opacity(0.08), lineWidth: 1)
                         )
-                        .shadow(color: isSelected ? Color.black.opacity(0.08) : Color.clear, radius: 1, x: 0, y: 1)
+                        .shadow(color: isSelected ? Color.black.opacity(0.15) : Color.clear, radius: 1, x: 0, y: 1)
                     }
                     .buttonStyle(.plain)
                     .disabled(account.isPaused)

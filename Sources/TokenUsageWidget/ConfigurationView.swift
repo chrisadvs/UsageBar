@@ -59,7 +59,7 @@ struct ConfigurationView: View {
                                 .font(.body)
                             
                             if account.isPaused {
-                                Text("(Paused - Ticket 14)")
+                                Text("(Paused)")
                                     .font(.caption2.bold())
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
