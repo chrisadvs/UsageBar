@@ -50,6 +50,7 @@ struct LogView: View {
                                 .font(.system(size: 11, weight: .regular, design: .monospaced))
                                 .foregroundColor(color(for: entry.level))
                                 .textSelection(.enabled)
+                                .fixedSize(horizontal: false, vertical: true)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }
                     }
@@ -80,7 +81,7 @@ struct LogView: View {
             }
         }
         .padding()
-        .frame(minWidth: 500, minHeight: 400)
+        .frame(minWidth: 350, idealWidth: 400, maxWidth: 420, minHeight: 300, idealHeight: 380, maxHeight: 450)
     }
     
     private func color(for level: LogLevel) -> Color {

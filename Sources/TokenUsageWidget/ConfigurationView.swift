@@ -92,9 +92,6 @@ struct ConfigurationView: View {
                     Button("View Logs...") {
                         showLogs = true
                     }
-                    .sheet(isPresented: $showLogs) {
-                        LogView()
-                    }
                 }
             }
             
@@ -131,7 +128,10 @@ struct ConfigurationView: View {
             }
         }
         .padding()
-        .frame(width: 320)
+        .frame(width: 340)
+        .sheet(isPresented: $showLogs) {
+            LogView()
+        }
         .onAppear {
             viewModel.updateLaunchAtLoginStatus(launchAtLogin)
         }

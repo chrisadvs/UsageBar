@@ -1,4 +1,6 @@
 import XCTest
+import SwiftUI
+import AppKit
 @testable import TokenUsageWidget
 
 final class AppLoggerTests: XCTestCase {
@@ -36,5 +38,24 @@ final class AppLoggerTests: XCTestCase {
         let formatted = logger.formattedLogs()
         XCTAssertTrue(formatted.contains("[INFO] Test 1"))
         XCTAssertTrue(formatted.contains("[ERROR] Test 2"))
+    }
+    
+    func testLogViewLayoutWithVeryLongTextDoesNotExceedMaxWidth() {
+        let logger = AppLogger.shared
+        logger.clear()
+        
+        // Insert a very long log line (e.g. over 1000 characters without spaces or newlines)
+        let longString = String(repeating: "A_VERY_LONG_LOG_MESSAGE_THAT_SHOULD_WRAP_AND_NOT_PUSH_THE_WINDOW_OFFSCREEN_", count: 15)
+        logger.log(longString, level: .error)
+        
+        let logView = LogView()
+        let hostingView = NSHostingView(rootView: logView)
+        
+        // Ask the hosting view for its fitting size when given a large unbound proposal
+        let fittingSize = hostingView.fittingSize
+        
+        // Assert that the width of the view does not exceed 420 (allowing a tiny delta for borders/padding if any, e.g. <= 430)
+        XCTAssertLessThanOrEqual(fittingSize.width, 430, "LogView width should be constrained by maxWidth: 420 even when containing extremely long log lines.")
+        XCTAssertGreaterThanOrEqual(fittingSize.width, 350, "LogView should maintain its minWidth of 350.")
     }
 }

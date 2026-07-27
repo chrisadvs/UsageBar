@@ -143,13 +143,13 @@ struct ContentView: View {
                 }
                 .buttonStyle(.plain)
                 .help("Configuration")
-                .popover(isPresented: $showConfiguration, arrowEdge: .bottom) {
-                    ConfigurationView(viewModel: viewModel)
-                }
             }
         }
         .padding()
         .frame(width: 350)
+        .popover(isPresented: $showConfiguration, attachmentAnchor: .point(.bottom), arrowEdge: .bottom) {
+            ConfigurationView(viewModel: viewModel)
+        }
         .onAppear {
             viewModel.loadData()
             viewModel.updateLaunchAtLoginStatus(launchAtLogin)
