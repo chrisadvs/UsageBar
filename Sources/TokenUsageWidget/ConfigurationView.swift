@@ -129,7 +129,7 @@ struct ConfigurationView: View {
         }
         .padding()
         .frame(width: 340)
-        .sheet(isPresented: $showLogs) {
+        .popover(isPresented: $showLogs, attachmentAnchor: .point(.bottom), arrowEdge: .bottom) {
             LogView()
         }
         .onAppear {

@@ -33,6 +33,7 @@ struct LogView: View {
                 Button("Done") {
                     dismiss()
                 }
+                .keyboardShortcut(.cancelAction)
             }
             
             Divider()
