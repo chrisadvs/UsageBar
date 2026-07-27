@@ -142,7 +142,7 @@ public enum GeminiWebUsageParser {
             ))
         }
         
-        windows.sort { $0.kind == .fiveHour && $1.kind == .weekly }
+        windows.sort { $0.kind.sortOrder < $1.kind.sortOrder }
         
         let group = UsageGroup(name: nil, windows: windows)
         return UsageSnapshot(groups: [group])

@@ -66,7 +66,7 @@ public struct AntigravityUsageParser {
             }
             
             // Sort windows so 5h is first, weekly is second (for UI consistency)
-            windows.sort { $0.kind == .fiveHour && $1.kind == .weekly }
+            windows.sort { $0.kind.sortOrder < $1.kind.sortOrder }
             
             usageGroups.append(UsageGroup(name: group.displayName, windows: windows))
         }

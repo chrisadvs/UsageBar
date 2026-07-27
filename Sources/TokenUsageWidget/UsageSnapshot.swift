@@ -3,6 +3,15 @@ import Foundation
 public enum WindowKind: Equatable {
     case fiveHour
     case weekly
+
+    /// Display sort priority. Lower sorts first. Use this instead of ad-hoc
+    /// pairwise comparators, which silently misorder once a third case exists.
+    var sortOrder: Int {
+        switch self {
+        case .fiveHour: return 0
+        case .weekly: return 1
+        }
+    }
 }
 
 public struct UsageWindow: Equatable {
