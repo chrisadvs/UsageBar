@@ -96,6 +96,7 @@ class WidgetViewModel: ObservableObject {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in
             if let error = error {
                 print("Notification permission error: \(error)")
+                AppLogger.shared.log("Notification permission error: \(error.localizedDescription)", level: .error)
             }
         }
     }
@@ -255,6 +256,7 @@ class WidgetViewModel: ObservableObject {
             }
         } catch {
             print("Failed to update SMAppService: \(error)")
+            AppLogger.shared.log("Failed to update SMAppService: \(error.localizedDescription)", level: .error)
         }
     }
 }
