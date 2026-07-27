@@ -182,16 +182,31 @@ class WidgetViewModel: ObservableObject {
         }
     }
     
+    /// Prefers the real installed app's own icon when present (a nice bonus for
+    /// users who have the desktop app), but this app never requires that desktop
+    /// app to be installed — it only ever talks to the web session. Falls back to
+    /// a bundled SF Symbol so the icon is never broken/missing for users who don't
+    /// have the desktop app, or have it installed somewhere non-standard.
     func providerIcon(for account: Account? = nil) -> NSImage {
         let target = account ?? accounts.first(where: { $0.id == selectedAccountID })
         guard let target = target else { return NSImage() }
-        if target.providerType == .claude {
-            return NSWorkspace.shared.icon(forFile: "/Applications/Claude.app")
-        } else if target.providerType == .gemini {
+        switch target.providerType {
+        case .claude:
+            return installedAppIcon(atPath: "/Applications/Claude.app")
+                ?? NSImage(systemSymbolName: "bubble.left.and.text.bubble.right.fill", accessibilityDescription: "Claude")
+                ?? NSImage()
+        case .gemini:
             return NSImage(systemSymbolName: "sparkles", accessibilityDescription: "Gemini") ?? NSImage()
-        } else {
-            return NSWorkspace.shared.icon(forFile: "/Applications/Antigravity IDE.app")
+        case .antigravity:
+            return installedAppIcon(atPath: "/Applications/Antigravity IDE.app")
+                ?? NSImage(systemSymbolName: "sparkle", accessibilityDescription: "Antigravity")
+                ?? NSImage()
         }
+    }
+
+    private func installedAppIcon(atPath path: String) -> NSImage? {
+        guard FileManager.default.fileExists(atPath: path) else { return nil }
+        return NSWorkspace.shared.icon(forFile: path)
     }
     
     private func checkAndNotifyIfNeeded(account: Account, old: UsageSnapshot?, new: UsageSnapshot) {
