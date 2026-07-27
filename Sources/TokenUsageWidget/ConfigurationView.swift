@@ -59,7 +59,7 @@ struct ConfigurationView: View {
                                 .font(.body)
                             
                             if account.isPaused {
-                                Text("(Paused)")
+                                Text("(Currently Unavailable)")
                                     .font(.caption2.bold())
                                     .padding(.horizontal, 6)
                                     .padding(.vertical, 2)
