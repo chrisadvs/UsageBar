@@ -18,6 +18,7 @@
 		35464FB53D216DC50DBAE91B /* UsageSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA13822FE222604BD511F1B /* UsageSnapshotTests.swift */; };
 		4028F323F360770C870195DD /* CredentialProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6DA8A11DE0F05153B0CEF7 /* CredentialProvider.swift */; };
 		4343881293D1198483F90680 /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF35D59495A8A33F88569B32 /* AppLogger.swift */; };
+		543BE2CCF39D75641086552D /* UsageAPIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F0B3944858C3B194C487CE3 /* UsageAPIClientTests.swift */; };
 		5A31216E9C7C921D28C44087 /* ConfigurationWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89820114486B44B5529263BA /* ConfigurationWindowController.swift */; };
 		5E722704D2E1C7B8E689DBC2 /* GeminiWebCredentialProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4E5C3F3B6AAB22819C4728 /* GeminiWebCredentialProvider.swift */; };
 		64B28CA5A8970010980CD8CB /* AntigravityUsageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5C1CCD8445E0F3250E5A68 /* AntigravityUsageParser.swift */; };
@@ -51,6 +52,7 @@
 		02658E33F724C7ABDCF7D358 /* GeminiLoginWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeminiLoginWindowController.swift; sourceTree = "<group>"; };
 		047D069DE6ADE26967D65998 /* AntigravityUsageAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntigravityUsageAPIClient.swift; sourceTree = "<group>"; };
 		1D25F4EE10E0E30E9DA8EF5E /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
+		1F0B3944858C3B194C487CE3 /* UsageAPIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageAPIClientTests.swift; sourceTree = "<group>"; };
 		242EB8675DEF503352E3AC40 /* WidgetViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetViewModel.swift; sourceTree = "<group>"; };
 		2ABBCE01D91CD4FC6CBAE5EC /* PKCE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PKCE.swift; sourceTree = "<group>"; };
 		33481B48194CEDCCB855CF2A /* AntigravityOAuthController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AntigravityOAuthController.swift; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 				6F89649C9474C8CFA7B133F7 /* AntigravityUsageParserTests.swift */,
 				A7346725616657E70BCDC35E /* AppLoggerTests.swift */,
 				6EE03DC980A25F9712FB411D /* GeminiWebUsageParserTests.swift */,
+				1F0B3944858C3B194C487CE3 /* UsageAPIClientTests.swift */,
 				FFA13822FE222604BD511F1B /* UsageSnapshotTests.swift */,
 				092FA76282F996B16DF353A6 /* OAuth */,
 			);
@@ -278,6 +281,7 @@
 				353B9152B7161F3CF6F2CC78 /* AppLoggerTests.swift in Sources */,
 				C961187C7A79575312378188 /* GeminiWebUsageParserTests.swift in Sources */,
 				A8031F64124761FA867578C4 /* OAuthTests.swift in Sources */,
+				543BE2CCF39D75641086552D /* UsageAPIClientTests.swift in Sources */,
 				35464FB53D216DC50DBAE91B /* UsageSnapshotTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

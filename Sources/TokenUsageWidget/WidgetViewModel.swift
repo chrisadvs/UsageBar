@@ -40,7 +40,7 @@ class WidgetViewModel: ObservableObject {
         let antigravityCreds = AntigravityCredentialProvider.shared
         let geminiCreds = GeminiWebCredentialProvider()
         
-        let claudeClient = UsageAPIClient(credentialProvider: claudeCreds, orgId: "0e15182b-a6f3-496b-aebb-23ec37dbe6be")
+        let claudeClient = UsageAPIClient(credentialProvider: claudeCreds)
         let antigravityClient = AntigravityUsageAPIClient(credentialProvider: antigravityCreds)
         let geminiClient = GeminiWebUsageAPIClient(credentialProvider: geminiCreds)
         

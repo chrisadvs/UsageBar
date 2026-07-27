@@ -1,16 +1,50 @@
 import Foundation
+import WebKit
 
 public class UsageAPIClient: UsageAPIClientProtocol {
     private let credentialProvider: CredentialProvider
-    private let orgId: String
     
-    public init(credentialProvider: CredentialProvider, orgId: String) {
+    public init(credentialProvider: CredentialProvider) {
         self.credentialProvider = credentialProvider
-        self.orgId = orgId
+    }
+    
+    public static func extractOrgId(from cookies: [HTTPCookie]) -> String? {
+        return cookies.first(where: { $0.name == "lastActiveOrg" && !$0.value.isEmpty })?.value
+    }
+    
+    public static func extractOrgId(fromCookieString cookieString: String) -> String? {
+        let pairs = cookieString.split(separator: ";").map { $0.trimmingCharacters(in: .whitespaces) }
+        for pair in pairs {
+            if pair.hasPrefix("lastActiveOrg=") {
+                let value = String(pair.dropFirst("lastActiveOrg=".count))
+                if !value.isEmpty { return value }
+            }
+        }
+        return nil
+    }
+    
+    private func getOrgIdFromCookieStore() async -> String? {
+        await withCheckedContinuation { continuation in
+            DispatchQueue.main.async {
+                WKWebsiteDataStore.default().httpCookieStore.getAllCookies { cookies in
+                    continuation.resume(returning: Self.extractOrgId(from: cookies))
+                }
+            }
+        }
     }
     
     public func fetchUsage() async throws -> UsageSnapshot {
         guard let cookie = await credentialProvider.getCredential(), !cookie.isEmpty else {
+            throw APIError.missingCookie
+        }
+        
+        var orgId = Self.extractOrgId(fromCookieString: cookie)
+        if orgId == nil {
+            orgId = await getOrgIdFromCookieStore()
+        }
+        
+        guard let orgId, !orgId.isEmpty else {
+            AppLogger.shared.log("[Claude] lastActiveOrg cookie missing. Treating as unauthenticated.", level: .error)
             throw APIError.missingCookie
         }
         
