@@ -17,12 +17,12 @@ final class UsageAPIClientTests: XCTestCase {
             .domain: ".claude.ai",
             .path: "/",
             .name: "lastActiveOrg",
-            .value: "0e15182b-a6f3-496b-aebb-23ec37dbe6be",
+            .value: "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
             .secure: true
         ])!
-        
+
         let orgId = UsageAPIClient.extractOrgId(from: [cookie1, cookie2])
-        XCTAssertEqual(orgId, "0e15182b-a6f3-496b-aebb-23ec37dbe6be")
+        XCTAssertEqual(orgId, "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
     }
     
     func testExtractLastActiveOrgWhenMissing() {
