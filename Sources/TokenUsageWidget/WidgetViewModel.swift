@@ -17,13 +17,6 @@ class WidgetViewModel: ObservableObject {
             updateCurrentSelectionState()
         }
     }
-    
-    // Alias for UI binding compatibility before Ticket 19
-    var selectedProvider: String {
-        get { selectedAccountID }
-        set { selectedAccountID = newValue }
-    }
-    
     @Published var snapshot: UsageSnapshot?
     @Published var errorMsg: String?
     @Published var isLoading = false
