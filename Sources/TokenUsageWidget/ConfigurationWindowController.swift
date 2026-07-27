@@ -21,6 +21,7 @@ class ConfigurationWindowController: NSObject, NSWindowDelegate {
         win.title = "Token Usage Configuration"
         win.center()
         win.isReleasedWhenClosed = false
+        win.isRestorable = false
         win.delegate = self
         win.minSize = NSSize(width: 440, height: 400)
         

@@ -18,6 +18,7 @@ public class LoginWindowController: NSObject, WKNavigationDelegate {
             win.title = "Log in to Claude"
             win.center()
             win.isReleasedWhenClosed = false
+            win.isRestorable = false
             
             let wv = WKWebView(frame: win.contentView!.bounds)
             wv.autoresizingMask = [.width, .height]

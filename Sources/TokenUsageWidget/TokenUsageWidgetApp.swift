@@ -4,6 +4,7 @@ import ServiceManagement
 class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        UserDefaults.standard.set(false, forKey: "NSQuitAlwaysKeepsWindows")
     }
 }
 
