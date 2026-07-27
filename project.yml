@@ -13,6 +13,8 @@ targets:
       properties:
         LSUIElement: true
         NSQuitAlwaysKeepsWindows: false
+        CFBundleName: UsageBar
+        CFBundleDisplayName: UsageBar
   TokenUsageWidgetTests:
     type: bundle.unit-test
     platform: macOS
