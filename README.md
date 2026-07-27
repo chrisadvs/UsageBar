@@ -45,7 +45,7 @@ If a prebuilt `.app` is attached to a GitHub Release instead, macOS Gatekeeper w
 |---|---|
 | Claude | Working |
 | Gemini (web) | Working |
-| Antigravity | Currently unavailable — the only working login path requires reusing Antigravity's own OAuth client credentials, which sits in a gray area regarding their terms of service. Parked until there's a cleaner path. |
+| Antigravity | Currently unavailable |
 
 ## License
 
