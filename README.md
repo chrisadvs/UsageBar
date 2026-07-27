@@ -2,7 +2,11 @@
 
 A macOS menu bar app that shows your Claude and Gemini usage limits at a glance — how much of your 5-hour and weekly quota you have left, with color-coded warnings and a notification when you're about to run out.
 
-<!-- TODO: add a screenshot of the menu bar dropdown here before publishing -->
+![The dropdown panel, showing 5-hour and 7-day usage for the current account](docs/screenshot-panel.png)
+
+The menu bar badge itself switches icon, label, and color depending on which account you're looking at:
+
+<img src="docs/screenshot-menubar-claude.png" alt="Menu bar badge showing Claude usage" height="28"> <img src="docs/screenshot-menubar-gemini.png" alt="Menu bar badge showing Gemini usage" height="28">
 
 ## Why
 
