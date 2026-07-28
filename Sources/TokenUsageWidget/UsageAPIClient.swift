@@ -58,27 +58,45 @@ public class UsageAPIClient: UsageAPIClientProtocol {
         // Mimic standard headers slightly just in case
         request.addValue("application/json", forHTTPHeaderField: "content-type")
         request.addValue("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36", forHTTPHeaderField: "user-agent")
-        
+
+        return try await performRequest(request, allowRetry: true)
+    }
+
+    /// Claude's API occasionally returns HTTP 200 with an empty body (observed
+    /// in real usage, not a 401/403/5xx — a genuinely transient server-side
+    /// blip, not an auth or network issue). Retrying once immediately resolves
+    /// it in practice; only surface an error to the user if the retry also
+    /// comes back empty.
+    private func performRequest(_ request: URLRequest, allowRetry: Bool) async throws -> UsageSnapshot {
         AppLogger.shared.log("[Claude] Sending GET request to usage API...", level: .info)
         let (data, response) = try await URLSession.shared.data(for: request)
-        
+
         guard let httpResponse = response as? HTTPURLResponse else {
             AppLogger.shared.log("[Claude] Invalid non-HTTP response received.", level: .error)
             throw APIError.invalidResponse
         }
-        
+
         AppLogger.shared.log("[Claude] HTTP status code: \(httpResponse.statusCode)", level: httpResponse.statusCode == 200 ? .info : .warn)
-        
+
         if httpResponse.statusCode == 401 || httpResponse.statusCode == 403 {
             AppLogger.shared.log("[Claude] Unauthorized (401/403). Session cookie expired.", level: .error)
             throw APIError.unauthorized
         }
-        
+
         guard httpResponse.statusCode == 200 else {
             AppLogger.shared.log("[Claude] Server error status code: \(httpResponse.statusCode)", level: .error)
             throw APIError.serverError(statusCode: httpResponse.statusCode)
         }
-        
+
+        if data.isEmpty {
+            AppLogger.shared.log("[Claude] Got HTTP 200 with an empty body (known transient server-side blip).", level: .warn)
+            guard allowRetry else {
+                throw APIError.invalidResponse
+            }
+            try await Task.sleep(nanoseconds: 1_000_000_000)
+            return try await performRequest(request, allowRetry: false)
+        }
+
         return try UsageParser.parse(json: data)
     }
 }

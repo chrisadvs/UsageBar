@@ -22,9 +22,15 @@ public struct LogEntry: Identifiable {
         self.message = message
     }
     
+    private static let displayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        formatter.timeZone = .current // local time, not UTC — this log is for a human to read
+        return formatter
+    }()
+
     public var formattedString: String {
-        let formatter = ISO8601DateFormatter()
-        return "[\(formatter.string(from: timestamp))] [\(level.rawValue)] \(message)"
+        return "[\(Self.displayFormatter.string(from: timestamp))] [\(level.rawValue)] \(message)"
     }
 }
 
