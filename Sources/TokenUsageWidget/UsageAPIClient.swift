@@ -97,7 +97,17 @@ public class UsageAPIClient: UsageAPIClientProtocol {
             return try await performRequest(request, allowRetry: false)
         }
 
-        return try UsageParser.parse(json: data)
+        do {
+            return try UsageParser.parse(json: data)
+        } catch {
+            // Diagnostic only: this response body is usage numbers/org metadata,
+            // not a credential, so it's safe to log — unlike Cookie/token values,
+            // which must never be logged. Needed to find out which field Claude's
+            // API is intermittently sending as null/missing.
+            let rawBody = String(data: data, encoding: .utf8) ?? "<non-utf8 data, \(data.count) bytes>"
+            AppLogger.shared.log("[Claude] Parse failed: \(error.localizedDescription). Raw body: \(rawBody)", level: .error)
+            throw error
+        }
     }
 }
 
