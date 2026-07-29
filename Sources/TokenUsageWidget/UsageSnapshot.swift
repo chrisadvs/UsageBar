@@ -100,8 +100,19 @@ public struct UsageParser {
             severity = .red
         }
         
-        let timeRemaining = window.resets_at.timeIntervalSince(now)
         let formatted: String
+        guard let resetsAt = window.resets_at else {
+            // No resets_at means this window hasn't started (0% utilization,
+            // nothing sent in it yet) — matches Claude's own web UI copy for
+            // this exact state ("Starts when a message is sent").
+            return UsageWindow(
+                kind: kind,
+                percentRemaining: percentRemaining,
+                severity: severity,
+                resetsAtFormatted: "Starts when used"
+            )
+        }
+        let timeRemaining = resetsAt.timeIntervalSince(now)
         if timeRemaining <= 0 {
             formatted = "0h 0m"
         } else {
@@ -135,5 +146,9 @@ fileprivate struct UsageResponse: Decodable {
 
 fileprivate struct WindowUsage: Decodable {
     let utilization: Double
-    let resets_at: Date
+    // Claude's API sends `resets_at: null` when this window hasn't started yet
+    // (0% utilization, no message sent in it — e.g. the 5-hour window before
+    // you've sent anything). This is a legitimate, expected state, not an
+    // error — must stay Optional, not force-decoded as Date.
+    let resets_at: Date?
 }

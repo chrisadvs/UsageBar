@@ -29,6 +29,28 @@ final class UsageSnapshotTests: XCTestCase {
         XCTAssertEqual(snapshot.sevenDay.resetsAtFormatted, "2d 0h")
     }
     
+    func testParsingNullResetsAtOnUnstartedWindow() throws {
+        // Real shape captured from Claude's API 2026-07-29 (values replaced with
+        // fixture-safe numbers): five_hour hasn't started yet (0% used), so the
+        // server sends resets_at: null for it. Must not throw.
+        let jsonString = """
+        {
+          "five_hour": { "utilization": 0.0, "resets_at": null, "limit_dollars": null },
+          "seven_day": { "utilization": 18.0, "resets_at": "2026-08-02T00:00:00.378174+00:00" }
+        }
+        """
+
+        let now = ISO8601DateFormatter().date(from: "2026-07-29T00:00:00Z")!
+
+        let snapshot = try UsageParser.parse(json: jsonString.data(using: .utf8)!, now: now)
+
+        XCTAssertEqual(snapshot.fiveHour.percentRemaining, 100.0)
+        XCTAssertEqual(snapshot.fiveHour.severity, .green)
+        XCTAssertEqual(snapshot.fiveHour.resetsAtFormatted, "Starts when used")
+
+        XCTAssertEqual(snapshot.sevenDay.percentRemaining, 82.0)
+    }
+
     func testSeverityThresholds() throws {
         let thresholds: [(Double, Severity)] = [
             (49.0, .green),
