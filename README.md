@@ -21,6 +21,8 @@ Both Claude and Gemini's web apps show your usage limits somewhere in their sett
 - Launch at login, optional.
 - **Token usage statistics (Claude Code only)**: a separate window showing exact token counts (not just quota percentage) for the current 5-hour window, today, this week, and this month, broken down by input/output/cache tokens and by model. Includes a historical trend chart and an estimated dollar cost based on Anthropic's published per-model pricing (fetched periodically, with a manual refresh option).
 
+![The Token Statistics window, showing exact input/output/cache token counts and a trend chart](docs/screenshot-token-stats.png)
+
 ## How it works (and why it might break)
 
 Neither Claude nor Gemini publish an official, documented API for personal usage data. This app works by reusing your own logged-in browser session (the same cookies your browser already has) to call the same internal endpoints their own web apps use — the same general approach as many browser extensions that show usage stats.

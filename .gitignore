@@ -7,3 +7,8 @@ cross_model_logs/
 agy-delegate.sh
 *.zip
 .opensource_release_approved
+.swiftpm/
+.tmp_cache/
+/input/
+/output/
+TokenUsageWidget.xcodeproj/
