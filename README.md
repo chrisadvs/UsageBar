@@ -59,6 +59,11 @@ Then build and run from Xcode (`Cmd+R`), or archive it (`Product > Archive`) to 
 | Claude | Working |
 | Gemini (web) | Working |
 
+## Acknowledgments
+
+- [ccusage](https://github.com/ryoppippi/ccusage) (MIT) — the tiered-by-cache-type pricing calculation (separate multipliers for 5m cache write, 1h cache write, and cache read) follows the approach used in this project.
+- [ccusage-menubar](https://github.com/Saqoosha/ccusage-menubar) — the two-tier cache + deduplication direction, and the general feasibility of a native Swift rewrite, were informed by this project's public README. No source code from it was read or reused (it has no LICENSE file, so none was taken).
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
