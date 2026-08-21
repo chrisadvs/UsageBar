@@ -1,0 +1,9 @@
+.build/
+DerivedData/
+*.xcuserstate
+.DS_Store
+xcuserdata/
+cross_model_logs/
+agy-delegate.sh
+*.zip
+.opensource_release_approved

@@ -1,0 +1,31 @@
+name: TokenUsageWidget
+options:
+  bundleIdPrefix: com.chrisadvs
+targets:
+  TokenUsageWidget:
+    type: application
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - path: Sources/TokenUsageWidget
+    settings:
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS: NO
+    info:
+      path: Info.plist
+      properties:
+        LSUIElement: true
+        NSQuitAlwaysKeepsWindows: false
+        CFBundleName: UsageBar
+        CFBundleDisplayName: UsageBar
+        CFBundleIconName: AppIcon
+  TokenUsageWidgetTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - path: Tests/TokenUsageWidgetTests
+    dependencies:
+      - target: TokenUsageWidget
+    settings:
+      GENERATE_INFOPLIST_FILE: YES
