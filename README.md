@@ -1,6 +1,6 @@
 # UsageBar
 
-A macOS menu bar app that shows your Claude and Gemini usage limits at a glance — how much of your 5-hour and weekly quota you have left, with color-coded warnings and a notification when you're about to run out.
+A macOS menu bar app that shows your Claude, Gemini, and Antigravity usage limits at a glance — how much of your 5-hour and weekly quota you have left, with color-coded warnings and a notification when you're about to run out.
 
 ![The dropdown panel, showing 5-hour and 7-day usage for the current account](docs/screenshot-panel.png)
 
@@ -10,7 +10,7 @@ The menu bar badge itself switches icon, label, and color depending on which acc
 
 ## Why
 
-Both Claude and Gemini's web apps show your usage limits somewhere in their settings, but you have to go dig for it. This puts the number in your menu bar, refreshed automatically.
+Claude, Gemini, and Antigravity's web apps all show your usage limits somewhere in their settings, but you have to go dig for it. This puts the number in your menu bar, refreshed automatically.
 
 ## Features
 
@@ -25,9 +25,9 @@ Both Claude and Gemini's web apps show your usage limits somewhere in their sett
 
 ## How it works (and why it might break)
 
-Neither Claude nor Gemini publish an official, documented API for personal usage data. This app works by reusing your own logged-in browser session (the same cookies your browser already has) to call the same internal endpoints their own web apps use — the same general approach as many browser extensions that show usage stats.
+None of Claude, Gemini, or Antigravity publish an official, documented API for personal usage data. This app works by reusing your own logged-in browser session (the same cookies your browser already has) to call the same internal endpoints their own web apps use — the same general approach as many browser extensions that show usage stats.
 
-Because these are undocumented, unofficial endpoints, **this app can break at any time** if Claude or Gemini change how their web app talks to their own backend. It is not affiliated with, endorsed by, or supported by Anthropic or Google. Use at your own risk, and expect the occasional breakage after either company ships a frontend change.
+Because these are undocumented, unofficial endpoints, **this app can break at any time** if Claude, Gemini, or Antigravity change how their web app talks to their own backend. It is not affiliated with, endorsed by, or supported by Anthropic or Google. Use at your own risk, and expect the occasional breakage after any of these companies ships a frontend change.
 
 No credentials are stored in plain text: session cookies live in the app's own isolated WebKit storage (the same mechanism Safari/Chrome use), and any long-lived tokens go through the macOS Keychain.
 
@@ -58,6 +58,7 @@ Then build and run from Xcode (`Cmd+R`), or archive it (`Product > Archive`) to 
 |---|---|
 | Claude | Working |
 | Gemini (web) | Working |
+| Antigravity (web) | Working |
 
 ## Acknowledgments
 
