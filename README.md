@@ -10,7 +10,7 @@ The menu bar badge itself switches icon, label, and color depending on which acc
 
 ## Why
 
-Claude, Gemini, and Antigravity's web apps all show your usage limits somewhere in their settings, but you have to go dig for it. This puts the number in your menu bar, refreshed automatically.
+The web apps for Claude, Gemini, and Antigravity all show your usage limits somewhere in their settings, but you have to go dig for it. This puts the number in your menu bar, refreshed automatically.
 
 ## Features
 
@@ -25,9 +25,9 @@ Claude, Gemini, and Antigravity's web apps all show your usage limits somewhere 
 
 ## How it works (and why it might break)
 
-None of Claude, Gemini, or Antigravity publish an official, documented API for personal usage data. This app works by reusing your own logged-in browser session (the same cookies your browser already has) to call the same internal endpoints their own web apps use — the same general approach as many browser extensions that show usage stats.
+None of Claude, Gemini, or Antigravity publishes an official, documented API for personal usage data. This app works by reusing your own logged-in browser session (the same cookies your browser already has) to call the same internal endpoints their own web apps use — the same general approach as many browser extensions that show usage stats.
 
-Because these are undocumented, unofficial endpoints, **this app can break at any time** if Claude, Gemini, or Antigravity change how their web app talks to their own backend. It is not affiliated with, endorsed by, or supported by Anthropic or Google. Use at your own risk, and expect the occasional breakage after any of these companies ships a frontend change.
+Because these are undocumented, unofficial endpoints, **this app can break at any time** if Claude, Gemini, or Antigravity change how their web app talks to their own backend. It is not affiliated with, endorsed by, or supported by Anthropic or Google. Use at your own risk, and expect the occasional breakage after Anthropic or Google ships a frontend change to any of these products.
 
 No credentials are stored in plain text: session cookies live in the app's own isolated WebKit storage (the same mechanism Safari/Chrome use), and any long-lived tokens go through the macOS Keychain.
 
