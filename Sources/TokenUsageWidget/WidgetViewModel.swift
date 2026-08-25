@@ -38,15 +38,18 @@ class WidgetViewModel: ObservableObject {
 
         let claudeCreds = WKWebViewCredentialProvider()
         let geminiCreds = GeminiWebCredentialProvider()
+        let antigravityCreds = AntigravityWebCredentialProvider()
 
         let claudeClient = UsageAPIClient(credentialProvider: claudeCreds)
         let geminiClient = GeminiWebUsageAPIClient(credentialProvider: geminiCreds)
+        let antigravityClient = AntigravityWebUsageAPIClient(credentialProvider: antigravityCreds)
 
         let savedVisibleIDs = UserDefaults.standard.array(forKey: "visibleAccountIDs") as? [String]
 
         self.accounts = [
             Account(id: "Claude", providerType: .claude, credentialProvider: claudeCreds, apiClient: claudeClient, isPaused: false, isVisibleInMainPanel: savedVisibleIDs?.contains("Claude") ?? true),
-            Account(id: "Gemini", providerType: .gemini, credentialProvider: geminiCreds, apiClient: geminiClient, isPaused: false, isVisibleInMainPanel: savedVisibleIDs?.contains("Gemini") ?? true)
+            Account(id: "Gemini", providerType: .gemini, credentialProvider: geminiCreds, apiClient: geminiClient, isPaused: false, isVisibleInMainPanel: savedVisibleIDs?.contains("Gemini") ?? true),
+            Account(id: "Antigravity", providerType: .antigravity, credentialProvider: antigravityCreds, apiClient: antigravityClient, isPaused: false, isVisibleInMainPanel: savedVisibleIDs?.contains("Antigravity") ?? true)
         ]
 
         updateCurrentSelectionState()
@@ -58,6 +61,10 @@ class WidgetViewModel: ObservableObject {
         }
 
         GeminiLoginWindowController.shared.onLoginSuccess = { [weak self] in
+            self?.loadData()
+        }
+
+        AntigravityLoginWindowController.shared.onLoginSuccess = { [weak self] in
             self?.loadData()
         }
     }
@@ -185,6 +192,8 @@ class WidgetViewModel: ObservableObject {
                                 LoginWindowController.shared.showLogin()
                             } else if account.providerType == .gemini {
                                 GeminiLoginWindowController.shared.showLogin()
+                            } else if account.providerType == .antigravity {
+                                AntigravityLoginWindowController.shared.showLogin()
                             }
                         }
                     } else {
@@ -245,6 +254,10 @@ class WidgetViewModel: ObservableObject {
                 ?? NSImage()
         case .gemini:
             return NSImage(systemSymbolName: "sparkles", accessibilityDescription: "Gemini") ?? NSImage()
+        case .antigravity:
+            return installedAppIcon(atPath: "/Applications/Antigravity.app")
+                ?? NSImage(systemSymbolName: "atom", accessibilityDescription: "Antigravity")
+                ?? NSImage()
         }
     }
 

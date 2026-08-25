@@ -3,6 +3,7 @@ import Foundation
 public enum ProviderType: String, Codable, CaseIterable {
     case claude = "Claude"
     case gemini = "Gemini"
+    case antigravity = "Antigravity"
 }
 
 public protocol UsageAPIClientProtocol {

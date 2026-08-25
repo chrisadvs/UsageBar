@@ -147,15 +147,18 @@ public class UsageAPIClient: UsageAPIClientProtocol {
 
 public enum APIError: Error, LocalizedError, Equatable {
     case missingCookie
+    case missingApiKey
     case invalidURL
     case invalidResponse
     case unauthorized
     case serverError(statusCode: Int)
-    
+
     public var errorDescription: String? {
         switch self {
         case .missingCookie:
             return "No cookie found. Please paste your cookie in Debug mode."
+        case .missingApiKey:
+            return "Could not obtain API key from the live frontend."
         case .invalidURL:
             return "Invalid API URL."
         case .invalidResponse:

@@ -23,7 +23,15 @@ struct TokenUsageWidgetApp: App {
 
     var body: some Scene {
         MenuBarExtra {
+            // .id() forces SwiftUI to treat this as a fresh view whenever the
+            // selected account changes, which in turn makes MenuBarExtra's
+            // auto-generated backing window re-measure its height. Without
+            // this, the window only ever grows to fit the largest content
+            // seen so far and never shrinks back down when switching to an
+            // account with fewer usage windows (e.g. Antigravity's 2 groups
+            // vs. Claude/Gemini's 1).
             ContentView(viewModel: viewModel)
+                .id(viewModel.selectedAccountID)
         } label: {
             if let snapshot = viewModel.snapshot {
                 let allWindows = snapshot.groups.flatMap { $0.windows }
@@ -163,6 +171,7 @@ struct ContentView: View {
         }
         .padding()
         .frame(width: 350)
+        .fixedSize(horizontal: false, vertical: true)
         .onAppear {
             viewModel.loadData()
             WidgetViewModel.updateLaunchAtLoginStatus(launchAtLogin)
