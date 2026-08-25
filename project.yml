@@ -19,6 +19,7 @@ targets:
         CFBundleName: UsageBar
         CFBundleDisplayName: UsageBar
         CFBundleIconName: AppIcon
+        CFBundleShortVersionString: "1.1.0"
   TokenUsageWidgetTests:
     type: bundle.unit-test
     platform: macOS
