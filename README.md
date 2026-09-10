@@ -35,7 +35,6 @@ No credentials are stored in plain text: session cookies live in the app's own i
 
 1. Download the latest `.zip` from the [Releases page](https://github.com/chrisadvs/UsageBar/releases/latest).
 2. Unzip it and drag `UsageBar.app` into `/Applications`.
-3. **Right-click the app and choose Open** (don't just double-click) the first time. The app isn't signed with a paid Apple Developer certificate, so macOS Gatekeeper will otherwise refuse to open it with an "unidentified developer" warning. This is only needed once.
 
 ## Building from source
 

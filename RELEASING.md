@@ -34,10 +34,10 @@ If this stops reproducing on a clean machine, this note can be removed.
 xcodebuild -project TokenUsageWidget.xcodeproj -scheme TokenUsageWidget -configuration Release clean build
 ```
 
-The built `.app` lands somewhere under `~/Library/Developer/Xcode/DerivedData/TokenUsageWidget-*/Build/Products/Release/TokenUsageWidget.app` — the exact hash in the folder name changes per machine/checkout, find it with:
+The built `.app` lands somewhere under `~/Library/Developer/Xcode/DerivedData/TokenUsageWidget-*/Build/Products/Release/UsageBar.app` — the exact hash in the folder name changes per machine/checkout, find it with:
 
 ```bash
-find ~/Library/Developer/Xcode/DerivedData -path "*/Build/Products/Release/TokenUsageWidget.app" -maxdepth 5
+find ~/Library/Developer/Xcode/DerivedData -path "*/Build/Products/Release/UsageBar.app" -maxdepth 5
 ```
 
 ## 4. Zip it
@@ -66,7 +66,7 @@ gh release upload vX.Y.Z UsageBar-vX.Y.Z.zip --clobber
 ## 6. Update your own local copy (optional)
 
 ```bash
-killall TokenUsageWidget 2>/dev/null
+killall UsageBar 2>/dev/null
 rm -rf "/Applications/UsageBar.app"
 cp -R "$APP_PATH" "/Applications/UsageBar.app"
 open "/Applications/UsageBar.app"
