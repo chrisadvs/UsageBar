@@ -43,7 +43,7 @@ public class GeminiWebCredentialProvider: NSObject, CredentialProvider, WKNaviga
         }
     }
     
-    public func saveCredential(_ credential: String) {
+    public nonisolated func saveCredential(_ credential: String) {
         // Not used for Gemini directly in this widget since we extract from WKWebView natively.
     }
     

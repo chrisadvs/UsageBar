@@ -54,7 +54,7 @@ public class AntigravityWebCredentialProvider: NSObject, CredentialProvider, WKN
         }
     }
     
-    public func saveCredential(_ credential: String) {
+    public nonisolated func saveCredential(_ credential: String) {
         // Not used for Antigravity directly in this widget since we extract from WKWebView natively.
     }
     
