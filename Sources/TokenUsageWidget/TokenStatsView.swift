@@ -1,11 +1,101 @@
 import SwiftUI
 import Charts
 
+enum TokenType: String, CaseIterable, Identifiable {
+    case input, output, cacheRead, cacheWrite
+
+    var id: String { rawValue }
+
+    var displayName: String {
+        switch self {
+        case .input: return "Input Tokens"
+        case .output: return "Output Tokens"
+        case .cacheRead: return "Cache Read Tokens"
+        case .cacheWrite: return "Cache Write Tokens"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .input: return .blue
+        case .output: return .green
+        case .cacheRead: return .purple
+        case .cacheWrite: return .orange
+        }
+    }
+
+    func value(from counts: TokenCounts) -> Int {
+        switch self {
+        case .input: return counts.input
+        case .output: return counts.output
+        case .cacheRead: return counts.cacheRead
+        case .cacheWrite: return counts.cacheCreationTotal
+        }
+    }
+
+    var shortLabel: String {
+        switch self {
+        case .input: return "In"
+        case .output: return "Out"
+        case .cacheRead: return "CR"
+        case .cacheWrite: return "CW"
+        }
+    }
+}
+
 struct TokenStatsView: View {
     @ObservedObject var viewModel: WidgetViewModel
     @State private var selectedScope: TokenUsageScope = .currentFiveHourWindow
     @State private var isPerModelExpanded: Bool = false
     @State private var hoverBucketDate: Date? = nil
+    @State private var visibleTokenTypes: Set<TokenType> = TokenStatsView.loadVisibleTokenTypes()
+
+    private static let visibleTokenTypesDefaultsKey = "visibleTokenTypes"
+
+    private static func loadVisibleTokenTypes() -> Set<TokenType> {
+        guard let saved = UserDefaults.standard.array(forKey: visibleTokenTypesDefaultsKey) as? [String] else {
+            return Set(TokenType.allCases)
+        }
+        return Set(saved.compactMap(TokenType.init(rawValue:)))
+    }
+
+    private func saveVisibleTokenTypes() {
+        UserDefaults.standard.set(visibleTokenTypes.map(\.rawValue), forKey: Self.visibleTokenTypesDefaultsKey)
+    }
+
+    private func setTokenType(_ type: TokenType, visible: Bool) {
+        if visible {
+            visibleTokenTypes.insert(type)
+        } else {
+            visibleTokenTypes.remove(type)
+        }
+        saveVisibleTokenTypes()
+    }
+
+    /// Sums only the currently checked token types — used so the bars and the trend chart
+    /// rescale to whatever's selected instead of always being dominated by cache volume.
+    private func filteredValue(for counts: TokenCounts) -> Int {
+        TokenType.allCases.reduce(0) { partial, type in
+            visibleTokenTypes.contains(type) ? partial + type.value(from: counts) : partial
+        }
+    }
+
+    // MARK: - Model Filter
+    // Deselection is exclusion-based (not inclusion-based) so any model key in
+    // summary.perModel is shown unless the user has explicitly hidden it.
+    @State private var deselectedModels: Set<String> = []
+
+    private func isModelVisible(_ model: String) -> Bool {
+        !deselectedModels.contains(model)
+    }
+
+    private func filteredCounts(from summary: TokenUsageSummary) -> TokenCounts {
+        summary.perModel.reduce(into: TokenCounts()) { partial, entry in
+            if isModelVisible(entry.key) {
+                partial += entry.value
+            }
+        }
+    }
     
     private static let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -29,9 +119,13 @@ struct TokenStatsView: View {
             }
             .pickerStyle(.segmented)
             .padding(.top, 2)
-            
+
             Divider()
-            
+
+            tokenTypeFilterSection
+
+            Divider()
+
             ScrollView(.vertical, showsIndicators: true) {
                 VStack(alignment: .leading, spacing: 16) {
                     // Token Counts Section
@@ -77,8 +171,45 @@ struct TokenStatsView: View {
         .frame(minWidth: 580, minHeight: 480)
     }
     
+    // MARK: - Token Type Filter
+
+    private var tokenTypeFilterSection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                Text("Token Types Shown")
+                    .font(.caption.bold())
+                    .foregroundColor(.secondary)
+                Spacer()
+                Button(visibleTokenTypes.count == TokenType.allCases.count ? "Deselect All" : "Select All") {
+                    visibleTokenTypes = visibleTokenTypes.count == TokenType.allCases.count ? [] : Set(TokenType.allCases)
+                    saveVisibleTokenTypes()
+                }
+                .buttonStyle(.plain)
+                .font(.caption)
+                .foregroundColor(.accentColor)
+            }
+            HStack(spacing: 14) {
+                ForEach(TokenType.allCases) { type in
+                    Toggle(isOn: Binding(
+                        get: { visibleTokenTypes.contains(type) },
+                        set: { setTokenType(type, visible: $0) }
+                    )) {
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(type.color)
+                                .frame(width: 6, height: 6)
+                            Text(type.displayName)
+                                .font(.caption)
+                        }
+                    }
+                    .toggleStyle(.checkbox)
+                }
+            }
+        }
+    }
+
     // MARK: - Subviews
-    
+
     private var unstartedFiveHourBanner: some View {
         VStack(alignment: .center, spacing: 6) {
             HStack {
@@ -102,35 +233,35 @@ struct TokenStatsView: View {
     }
     
     private func tokenCountsRows(summary: TokenUsageSummary) -> some View {
-        let counts = summary.counts
-        let maxVal = max(counts.input, counts.output, counts.cacheRead, counts.cacheCreationTotal, 1)
-        
+        let counts = filteredCounts(from: summary)
+        let visibleTypes = TokenType.allCases.filter { visibleTokenTypes.contains($0) }
+        let maxVal = max(visibleTypes.map { $0.value(from: counts) }.max() ?? 0, 1)
+        let allModelsDeselected = !summary.perModel.isEmpty && summary.perModel.keys.allSatisfy { !isModelVisible($0) }
+
         return VStack(alignment: .leading, spacing: 10) {
-            tokenRow(
-                title: "Input Tokens",
-                count: counts.input,
-                maxCount: maxVal,
-                color: .blue
-            )
-            tokenRow(
-                title: "Output Tokens",
-                count: counts.output,
-                maxCount: maxVal,
-                color: .green
-            )
-            tokenRow(
-                title: "Cache Read Tokens",
-                count: counts.cacheRead,
-                maxCount: maxVal,
-                color: .purple
-            )
-            tokenRow(
-                title: "Cache Write Tokens",
-                count: counts.cacheCreationTotal,
-                maxCount: maxVal,
-                color: .orange,
-                subtitle: counts.cacheCreationTotal > 0 ? "5m: \(TokenFormatter.formatNumber(counts.cacheCreation5m)) · 1h: \(TokenFormatter.formatNumber(counts.cacheCreation1h))" : nil
-            )
+            if visibleTypes.isEmpty {
+                Text("No token types selected.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.vertical, 4)
+            } else if allModelsDeselected {
+                Text("No models selected.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(.vertical, 4)
+            } else {
+                ForEach(visibleTypes) { type in
+                    tokenRow(
+                        title: type.displayName,
+                        count: type.value(from: counts),
+                        maxCount: maxVal,
+                        color: type.color,
+                        subtitle: type == .cacheWrite && counts.cacheCreationTotal > 0
+                            ? "5m: \(TokenFormatter.formatNumber(counts.cacheCreation5m)) · 1h: \(TokenFormatter.formatNumber(counts.cacheCreation1h))"
+                            : nil
+                    )
+                }
+            }
         }
     }
     
@@ -191,15 +322,31 @@ struct TokenStatsView: View {
     }
     
     private var currentTrendBuckets: [TrendBucket] {
-        viewModel.trendBuckets[selectedScope] ?? []
+        (viewModel.trendBuckets[selectedScope] ?? []).filter { isModelVisible($0.model) }
     }
     
     private var trendTotals: [(bucketStart: Date, total: Int)] {
         var map: [Date: Int] = [:]
         for bucket in currentTrendBuckets {
-            map[bucket.bucketStart, default: 0] += bucket.counts.total
+            map[bucket.bucketStart, default: 0] += filteredValue(for: bucket.counts)
         }
         return map.keys.sorted().map { ($0, map[$0] ?? 0) }
+    }
+
+    private var chartYAxisUpperBound: Double {
+        let peak: Int
+        if isPerModelExpanded {
+            // AreaMark with foregroundStyle(by:) stacks marks sharing an x position, so the
+            // domain must equal the summed per-bucket total across all visible models.
+            var stackedTotals: [Date: Int] = [:]
+            for bucket in currentTrendBuckets {
+                stackedTotals[bucket.bucketStart, default: 0] += filteredValue(for: bucket.counts)
+            }
+            peak = stackedTotals.values.max() ?? 0
+        } else {
+            peak = trendTotals.map(\.total).max() ?? 0
+        }
+        return Double(max(peak, 1)) * 1.15
     }
     
     private var chartCalendarUnit: Calendar.Component {
@@ -255,6 +402,24 @@ struct TokenStatsView: View {
                         .padding(.vertical, 30)
                     Spacer()
                 }
+            } else if visibleTokenTypes.isEmpty {
+                HStack {
+                    Spacer()
+                    Text("No token types selected.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.vertical, 30)
+                    Spacer()
+                }
+            } else if currentTrendBuckets.isEmpty && !(viewModel.trendBuckets[selectedScope] ?? []).isEmpty {
+                HStack {
+                    Spacer()
+                    Text("No models selected.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .padding(.vertical, 30)
+                    Spacer()
+                }
             } else if currentTrendBuckets.isEmpty {
                 HStack {
                     Spacer()
@@ -270,7 +435,7 @@ struct TokenStatsView: View {
                         ForEach(currentTrendBuckets) { bucket in
                             AreaMark(
                                 x: .value("Date", bucket.bucketStart, unit: chartCalendarUnit),
-                                y: .value("Tokens", bucket.counts.total)
+                                y: .value("Tokens", filteredValue(for: bucket.counts))
                             )
                             .foregroundStyle(by: .value("Model", bucket.model))
                         }
@@ -304,6 +469,7 @@ struct TokenStatsView: View {
                 .chartXAxis {
                     chartXAxisMarks
                 }
+                .chartYScale(domain: 0...chartYAxisUpperBound)
                 .chartYAxis {
                     AxisMarks { value in
                         if let intVal = value.as(Int.self) {
@@ -406,32 +572,60 @@ struct TokenStatsView: View {
     }
 
     private func perModelBreakdownContent(summary: TokenUsageSummary) -> some View {
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(summary.perModel.keys.sorted(), id: \.self) { model in
-                    if let modelCounts = summary.perModel[model] {
-                        VStack(alignment: .leading, spacing: 4) {
-                            HStack {
-                                Text(model)
-                                    .font(.subheadline.bold())
-                                Spacer()
-                                Text("Total: \(TokenFormatter.formatCompact(modelCounts.total))")
-                                    .font(.caption.bold())
+            let visibleTypes = TokenType.allCases.filter { visibleTokenTypes.contains($0) }
+            let allModels = summary.perModel.keys.sorted()
+
+            return VStack(alignment: .leading, spacing: 8) {
+                if visibleTypes.isEmpty {
+                    Text("No token types selected.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                } else {
+                    ForEach(allModels, id: \.self) { model in
+                        if let modelCounts = summary.perModel[model] {
+                            let isVisible = isModelVisible(model)
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack {
+                                    Toggle(isOn: Binding(
+                                        get: { isModelVisible(model) },
+                                        set: { isOn in
+                                            if isOn {
+                                                deselectedModels.remove(model)
+                                            } else {
+                                                deselectedModels.insert(model)
+                                            }
+                                        }
+                                    )) {
+                                        Text(model)
+                                            .font(.subheadline.bold())
+                                    }
+                                    .toggleStyle(.checkbox)
+                                    Spacer()
+                                    Text("Total: \(TokenFormatter.formatCompact(filteredValue(for: modelCounts)))")
+                                        .font(.caption.bold())
+                                }
+
+                                HStack(spacing: 12) {
+                                    ForEach(visibleTypes) { type in
+                                        Text("\(type.shortLabel): \(TokenFormatter.formatCompact(type.value(from: modelCounts)))")
+                                    }
+                                }
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                             }
-                            
-                            HStack(spacing: 12) {
-                                Text("In: \(TokenFormatter.formatCompact(modelCounts.input))")
-                                Text("Out: \(TokenFormatter.formatCompact(modelCounts.output))")
-                                Text("CR: \(TokenFormatter.formatCompact(modelCounts.cacheRead))")
-                                Text("CW: \(TokenFormatter.formatCompact(modelCounts.cacheCreationTotal))")
-                            }
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                            .opacity(isVisible ? 1.0 : 0.4)
+                            .padding(.vertical, 4)
+                            Divider()
                         }
-                        .padding(.vertical, 4)
-                        Divider()
                     }
                 }
-                
+
+                if allModels.count > 1 && !allModels.allSatisfy(isModelVisible) {
+                    Text("Unchecked models are excluded from the totals and chart above.")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+
                 if summary.unpricedMessageCount > 0 {
                     Text("\(summary.unpricedMessageCount) messages used an unrecognized model and are not included in the cost estimate.")
                         .font(.caption)
