@@ -93,7 +93,7 @@ public class AntigravityWebUsageAPIClient: UsageAPIClientProtocol {
         }
         
         guard let instances = try? JSONSerialization.jsonObject(with: listData, options: [.fragmentsAllowed]),
-              let outer = instances as? [[Any]],
+              let outer = instances as? [Any],
               let list = outer.first as? [[Any]] else {
             AppLogger.shared.log("[Antigravity] Failed to parse ListInstances response structure.", level: .error)
             throw APIError.invalidResponse

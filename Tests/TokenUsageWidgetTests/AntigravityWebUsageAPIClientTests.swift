@@ -43,6 +43,36 @@ final class AntigravityWebUsageAPIClientTests: XCTestCase {
         // invalidated on auth failure instead of only the cookie cache.
         XCTAssertEqual(indexFetchCount, 2, "401 handling should force a fresh API key fetch, not just invalidate the cookie cache")
     }
+
+    func testListInstancesWithTrailingFieldSucceeds() async throws {
+        let credentialProvider = StubCredentialProvider()
+        let innerJson = "{\"response\":{\"groups\":[{\"displayName\":\"Gemini Models\",\"buckets\":[{\"bucketId\":\"gemini-weekly\",\"displayName\":\"Weekly Limit Remaining\",\"window\":\"weekly\",\"remainingFraction\":0.88,\"resetTime\":\"2026-09-15T00:00:00Z\"}]}]}}"
+        let b64 = Data(innerJson.utf8).base64EncodedString()
+
+        let session = AntigravityStubURLProtocol.makeSession { url in
+            if url.path.contains("ListInstances") {
+                // Return payload with trailing field 10 (heterogeneous array [ [[...]], 10 ])
+                return (200, "[[[\"test-instance-id\", [\"test-host\", \"2.12.2-v2\"], 1, [\"1700000000\", 436512000]]], 10]")
+            } else if url.path.contains("ProxyCommand") {
+                return (200, "[\"\(b64)\"]")
+            } else if url.host == "antigravity.google.com" {
+                return (200, "<script src=\"https://www.gstatic.com/_/mss/boq-jetski/_/js/k=fake\"></script>")
+            } else {
+                return (200, "this.apiKey=\"AIzaSyFAKEFAKEFAKEFAKEFAKEFAKEFAKE\";")
+            }
+        }
+
+        let apiKeyProvider = AntigravityApiKeyProvider(session: session)
+        let client = AntigravityWebUsageAPIClient(
+            credentialProvider: credentialProvider,
+            apiKeyProvider: apiKeyProvider,
+            session: session
+        )
+
+        let snapshot = try await client.fetchUsage()
+        XCTAssertEqual(snapshot.groups.count, 1)
+        XCTAssertEqual(snapshot.groups.first?.name, "Gemini Models")
+    }
 }
 
 private final class StubCredentialProvider: CredentialProvider {
